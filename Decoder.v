@@ -370,6 +370,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[1] == 1'b1) begin // Check if RRF is valid
                             RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = RRF_D_ARF_tag_1; // Operand available @ RRF
                             RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_1) begin // Check if ALU1 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_1) begin // Check if ALU2 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_1) begin // Check if LS is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = LS_D; // Use LS_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_1 };
                             RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b0; // Operand not available
@@ -380,6 +389,15 @@ always @(*) begin
                             RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else if (RRF_V_ARF_tags[2] == 1'b1) begin // Check if RRF is valid
                             RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = RRF_D_ARF_tag_2; // Operand available @ RRF
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_2) begin // Check if ALU1 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_2) begin // Check if ALU2 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_2) begin // Check if LS is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = LS_D; // Use LS_D as operand 1
                             RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_2 };
@@ -392,6 +410,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[3] == 1'b1) begin // Check if RRF is valid
                             RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = RRF_D_ARF_tag_3; // Operand available @ RRF
                             RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_3) begin // Check if ALU1 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_3) begin // Check if ALU2 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_3) begin // Check if LS is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = LS_D; // Use LS_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_3 };
                             RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b0; // Operand not available
@@ -402,6 +429,15 @@ always @(*) begin
                             RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else if (RRF_V_ARF_tags[4] == 1'b1) begin // Check if RRF is valid
                             RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = RRF_D_ARF_tag_4; // Operand available @ RRF
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_4) begin // Check if ALU1 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_4) begin // Check if ALU2 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_4) begin // Check if LS is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = LS_D; // Use LS_D as operand 1
                             RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_4 };
@@ -414,6 +450,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[5] == 1'b1) begin // Check if RRF is valid
                             RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = RRF_D_ARF_tag_5; // Operand available @ RRF
                             RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_5) begin // Check if ALU1 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_5) begin // Check if ALU2 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_5) begin // Check if LS is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = LS_D; // Use LS_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_5 };
                             RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b0; // Operand not available
@@ -425,6 +470,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[6] == 1'b1) begin // Check if RRF is valid
                             RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = RRF_D_ARF_tag_6; // Operand available @ RRF
                             RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_6) begin // Check if ALU1 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_6) begin // Check if ALU2 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_6) begin // Check if LS is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = LS_D; // Use LS_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_6 };
                             RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b0; // Operand not available
@@ -435,6 +489,15 @@ always @(*) begin
                             RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else if (RRF_V_ARF_tags[7] == 1'b1) begin // Check if RRF is valid
                             RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = RRF_D_ARF_tag_7; // Operand available @ RRF
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_7) begin // Check if ALU1 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_7) begin // Check if ALU2 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_7) begin // Check if LS is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = LS_D; // Use LS_D as operand 1
                             RS_AL_1[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_1[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_7 };
@@ -459,6 +522,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[1] == 1'b1) begin // Check if RRF is valid
                             RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = RRF_D_ARF_tag_1; // Operand available @ RRF
                             RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_1) begin // Check if ALU1 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_1) begin // Check if ALU2 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_1) begin // Check if LS is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = LS_D; // Use LS_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_1 };
                             RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b0; // Operand not available
@@ -469,6 +541,15 @@ always @(*) begin
                             RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else if (RRF_V_ARF_tags[2] == 1'b1) begin // Check if RRF is valid
                             RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = RRF_D_ARF_tag_2; // Operand available @ RRF
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_2) begin // Check if ALU1 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_2) begin // Check if ALU2 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_2) begin // Check if LS is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = LS_D; // Use LS_D as operand 1
                             RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_2 };
@@ -481,6 +562,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[3] == 1'b1) begin // Check if RRF is valid
                             RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = RRF_D_ARF_tag_3; // Operand available @ RRF
                             RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_3) begin // Check if ALU1 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_3) begin // Check if ALU2 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_3) begin // Check if LS is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = LS_D; // Use LS_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_3 };
                             RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b0; // Operand not available
@@ -491,6 +581,15 @@ always @(*) begin
                             RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else if (RRF_V_ARF_tags[4] == 1'b1) begin // Check if RRF is valid
                             RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = RRF_D_ARF_tag_4; // Operand available @ RRF
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_4) begin // Check if ALU1 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_4) begin // Check if ALU2 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_4) begin // Check if LS is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = LS_D; // Use LS_D as operand 1
                             RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_4 };
@@ -503,6 +602,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[5] == 1'b1) begin // Check if RRF is valid
                             RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = RRF_D_ARF_tag_5; // Operand available @ RRF
                             RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_5) begin // Check if ALU1 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_5) begin // Check if ALU2 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_5) begin // Check if LS is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = LS_D; // Use LS_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_5 };
                             RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b0; // Operand not available
@@ -514,6 +622,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[6] == 1'b1) begin // Check if RRF is valid
                             RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = RRF_D_ARF_tag_6; // Operand available @ RRF
                             RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_6) begin // Check if ALU1 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_6) begin // Check if ALU2 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_6) begin // Check if LS is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = LS_D; // Use LS_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_6 };
                             RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b0; // Operand not available
@@ -524,6 +641,15 @@ always @(*) begin
                             RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else if (RRF_V_ARF_tags[7] == 1'b1) begin // Check if RRF is valid
                             RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = RRF_D_ARF_tag_7; // Operand available @ RRF
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_7) begin // Check if ALU1 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_7) begin // Check if ALU2 is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_7) begin // Check if LS is writing to R1
+                            RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = LS_D; // Use LS_D as operand 1
                             RS_AL_1[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_1[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_7 };
@@ -557,6 +683,12 @@ always @(*) begin
                     end else if (R_CZ_V_arch_C_tag == 1'b1) begin // Check if R_C is valid
                         RS_AL_1[RS_AL_ENTRY_SIZE-61:RS_AL_ENTRY_SIZE-68] = {(8){R_CZ_D_arch_C_tag}}; // C available @ R_C
                         RS_AL_1[RS_AL_ENTRY_SIZE-69] = 1'b1; // Set C valid
+                    end else if (ALU1_C_W == 1'b1 && ALU1_C_RR == arch_C_tag) begin // Check if ALU1 is writing to R1
+                        RS_AL_1[RS_AL_ENTRY_SIZE-61:RS_AL_ENTRY_SIZE-68] = {(8){ALU1_C}}; // Use ALU1_D as operand 1
+                        RS_AL_1[RS_AL_ENTRY_SIZE-69] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_C_W == 1'b1 && ALU2_C_RR == arch_C_tag) begin // Check if ALU2 is writing to R1
+                        RS_AL_1[RS_AL_ENTRY_SIZE-61:RS_AL_ENTRY_SIZE-68] =  {(8){ALU2_C}}; // Use ALU2_D as operand 1
+                        RS_AL_1[RS_AL_ENTRY_SIZE-69] = 1'b1; // Set operand 1 valid
                     end else begin // C not available
                         RS_AL_1[RS_AL_ENTRY_SIZE-61:RS_AL_ENTRY_SIZE-68] = arch_C_tag;
                         RS_AL_1[RS_AL_ENTRY_SIZE-69] = 1'b0; // C not available
@@ -574,6 +706,15 @@ always @(*) begin
                     end else if (R_CZ_V_arch_Z_tag == 1'b1) begin // Check if R_Z is valid
                         RS_AL_1[RS_AL_ENTRY_SIZE-70:RS_AL_ENTRY_SIZE-77] = {(8){R_CZ_D_arch_Z_tag}}; // X available @ R_Z
                         RS_AL_1[RS_AL_ENTRY_SIZE-78] = 1'b1; // Set Z valid
+                    end else if (ALU1_Z_W == 1'b1 && ALU1_Z_RR == arch_Z_tag) begin // Check if ALU1 is writing to R1
+                        RS_AL_1[RS_AL_ENTRY_SIZE-70:RS_AL_ENTRY_SIZE-77] = {(8){ALU1_Z}}; // Use ALU1_D as operand 1
+                        RS_AL_1[RS_AL_ENTRY_SIZE-78] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_Z_W == 1'b1 && ALU2_Z_RR == arch_Z_tag) begin // Check if ALU2 is writing to R1
+                        RS_AL_1[RS_AL_ENTRY_SIZE-70:RS_AL_ENTRY_SIZE-77] = {(8){ALU2_Z}}; // Use ALU2_D as operand 1
+                        RS_AL_1[RS_AL_ENTRY_SIZE-78] = 1'b1; // Set operand 1 valid
+                    end else if (LS_Z_W == 1'b1 && LS_Z_RR == arch_Z_tag) begin // Check if LS is writing to R1
+                        RS_AL_1[RS_AL_ENTRY_SIZE-70:RS_AL_ENTRY_SIZE-77] = LS_Z; // Use LS_D as operand 1
+                        RS_AL_1[RS_AL_ENTRY_SIZE-78] = 1'b1; // Set operand 1 valid
                     end else begin // Z not available
                         RS_AL_1[RS_AL_ENTRY_SIZE-70:RS_AL_ENTRY_SIZE-77] = arch_Z_tag;
                         RS_AL_1[RS_AL_ENTRY_SIZE-78] = 1'b0; // Z not available
@@ -747,6 +888,15 @@ always @(*) begin
                     end else if (RRF_V_ARF_tags[1] == 1'b1) begin // Check if RRF is valid
                         RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = RRF_D_ARF_tag_1; // Base available @ RRF
                         RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set Base valid
+                    end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_1) begin // Check if ALU1 is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU1_D; // Use ALU1_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_1) begin // Check if ALU2 is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU2_D; // Use ALU2_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_1) begin // Check if LS is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = LS_D; // Use LS_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
                     end else begin // Base not available
                         RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_1 };
                         RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b0; // Base not available
@@ -758,6 +908,15 @@ always @(*) begin
                     end else if (RRF_V_ARF_tags[2] == 1'b1) begin // Check if RRF is valid
                         RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = RRF_D_ARF_tag_2; // Base available @ RRF
                         RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set Base valid
+                    end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_2) begin // Check if ALU1 is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU1_D; // Use ALU1_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_2) begin // Check if ALU2 is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU2_D; // Use ALU2_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_2) begin // Check if LS is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = LS_D; // Use LS_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
                     end else begin // Base not available
                         RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_2 };
                         RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b0; // Base not available
@@ -769,6 +928,15 @@ always @(*) begin
                     end else if (RRF_V_ARF_tags[3] == 1'b1) begin // Check if RRF is valid
                         RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = RRF_D_ARF_tag_3; // Base available @ RRF
                         RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set Base valid
+                    end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_3) begin // Check if ALU1 is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU1_D; // Use ALU1_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_3) begin // Check if ALU2 is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU2_D; // Use ALU2_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_3) begin // Check if LS is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = LS_D; // Use LS_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
                     end else begin // Base not available
                         RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_3 };
                         RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b0; // Base not available
@@ -780,6 +948,15 @@ always @(*) begin
                     end else if (RRF_V_ARF_tags[4] == 1'b1) begin // Check if RRF is valid
                         RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = RRF_D_ARF_tag_4; // Base available @ RRF
                         RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set Base valid
+                    end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_4) begin // Check if ALU1 is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU1_D; // Use ALU1_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_4) begin // Check if ALU2 is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU2_D; // Use ALU2_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_4) begin // Check if LS is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = LS_D; // Use LS_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
                     end else begin // Base not available
                         RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_4 };
                         RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b0; // Base not available
@@ -791,6 +968,15 @@ always @(*) begin
                     end else if (RRF_V_ARF_tags[5] == 1'b1) begin // Check if RRF is valid
                         RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = RRF_D_ARF_tag_5; // Base available @ RRF
                         RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set Base valid
+                    end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_5) begin // Check if ALU1 is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU1_D; // Use ALU1_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_5) begin // Check if ALU2 is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU2_D; // Use ALU2_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_5) begin // Check if LS is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = LS_D; // Use LS_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
                     end else begin // Base not available
                         RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_5 };
                         RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b0; // Base not available
@@ -802,6 +988,15 @@ always @(*) begin
                     end else if (RRF_V_ARF_tags[6] == 1'b1) begin // Check if RRF is valid
                         RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = RRF_D_ARF_tag_6; // Base available @ RRF
                         RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set Base valid
+                    end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_6) begin // Check if ALU1 is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU1_D; // Use ALU1_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_6) begin // Check if ALU2 is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU2_D; // Use ALU2_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_6) begin // Check if LS is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = LS_D; // Use LS_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
                     end else begin // Base not available
                         RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_6 };
                         RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b0; // Base not available
@@ -813,6 +1008,15 @@ always @(*) begin
                     end else if (RRF_V_ARF_tags[7] == 1'b1) begin // Check if RRF is valid
                         RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = RRF_D_ARF_tag_7; // Base available @ RRF
                         RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set Base valid
+                    end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_7) begin // Check if ALU1 is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU1_D; // Use ALU1_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_7) begin // Check if ALU2 is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU2_D; // Use ALU2_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_7) begin // Check if LS is writing to R1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = LS_D; // Use LS_D as operand 1
+                        RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
                     end else begin // Base not available
                         RS_LS_1[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_7 };
                         RS_LS_1[RS_LS_ENTRY_SIZE-19] = 1'b0; // Base not available
@@ -834,6 +1038,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[1] == 1'b1) begin // Check if RRF is valid
                             RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = RRF_D_ARF_tag_1; // Source available @ RRF
                             RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set Source valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_1) begin // Check if ALU1 is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_1) begin // Check if ALU2 is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_1) begin // Check if LS is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = LS_D; // Use LS_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
                         end else begin // Source not available
                             RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_1 };
                             RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b0; // Source not available
@@ -845,6 +1058,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[2] == 1'b1) begin // Check if RRF is valid
                             RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = RRF_D_ARF_tag_2; // Source available @ RRF
                             RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set Source valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_2) begin // Check if ALU1 is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_2) begin // Check if ALU2 is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_2) begin // Check if LS is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = LS_D; // Use LS_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
                         end else begin // Source not available
                             RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_2 };
                             RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b0; // Source not available
@@ -856,6 +1078,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[3] == 1'b1) begin // Check if RRF is valid
                             RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = RRF_D_ARF_tag_3; // Source available @ RRF
                             RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set Source valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_3) begin // Check if ALU1 is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_3) begin // Check if ALU2 is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_3) begin // Check if LS is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = LS_D; // Use LS_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
                         end else begin // Source not available
                             RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_3 };
                             RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b0; // Source not available
@@ -867,6 +1098,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[4] == 1'b1) begin // Check if RRF is valid
                             RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = RRF_D_ARF_tag_4; // Source available @ RRF
                             RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set Source valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_4) begin // Check if ALU1 is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_4) begin // Check if ALU2 is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_4) begin // Check if LS is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = LS_D; // Use LS_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
                         end else begin // Source not available
                             RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_4 };
                             RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b0; // Source not available
@@ -878,6 +1118,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[5] == 1'b1) begin // Check if RRF is valid
                             RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = RRF_D_ARF_tag_5; // Source available @ RRF
                             RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set Source valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_5) begin // Check if ALU1 is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_5) begin // Check if ALU2 is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_5) begin // Check if LS is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = LS_D; // Use LS_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
                         end else begin // Source not available
                             RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_5 };
                             RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b0; // Source not available
@@ -889,6 +1138,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[6] == 1'b1) begin // Check if RRF is valid
                             RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = RRF_D_ARF_tag_6; // Source available @ RRF
                             RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set Source valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_6) begin // Check if ALU1 is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_6) begin // Check if ALU2 is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_6) begin // Check if LS is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = LS_D; // Use LS_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
                         end else begin // Source not available
                             RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_6 };
                             RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b0; // Source not available
@@ -900,6 +1158,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[7] == 1'b1) begin // Check if RRF is valid
                             RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = RRF_D_ARF_tag_7; // Source available @ RRF
                             RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set Source valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_7) begin // Check if ALU1 is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_7) begin // Check if ALU2 is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_7) begin // Check if LS is writing to R1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = LS_D; // Use LS_D as operand 1
+                            RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
                         end else begin // Source not available
                             RS_LS_1[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_7 };
                             RS_LS_1[RS_LS_ENTRY_SIZE-52] = 1'b0; // Source not available
@@ -967,6 +1234,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[1] == 1'b1) begin // Check if RRF is valid
                             RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = RRF_D_ARF_tag_1; // Operand available @ RRF
                             RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_1) begin // Check if ALU1 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_1) begin // Check if ALU2 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_1) begin // Check if LS is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = LS_D; // Use LS_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_1 };
                             RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b0; // Operand not available
@@ -977,6 +1253,15 @@ always @(*) begin
                             RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else if (RRF_V_ARF_tags[2] == 1'b1) begin // Check if RRF is valid
                             RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = RRF_D_ARF_tag_2; // Operand available @ RRF
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_2) begin // Check if ALU1 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_2) begin // Check if ALU2 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_2) begin // Check if LS is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = LS_D; // Use LS_D as operand 1
                             RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_2 };
@@ -989,6 +1274,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[3] == 1'b1) begin // Check if RRF is valid
                             RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = RRF_D_ARF_tag_3; // Operand available @ RRF
                             RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_3) begin // Check if ALU1 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_3) begin // Check if ALU2 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_3) begin // Check if LS is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = LS_D; // Use LS_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_3 };
                             RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b0; // Operand not available
@@ -1000,6 +1294,16 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[4] == 1'b1) begin // Check if RRF is valid
                             RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = RRF_D_ARF_tag_4; // Operand available @ RRF
                             RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_4) begin // Check if ALU1 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_4) begin // Check if ALU2 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_4) begin // Check if LS is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = LS_D; // Use LS_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+
                         end else begin // Operand not available
                             RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_4 };
                             RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b0; // Operand not available
@@ -1010,6 +1314,15 @@ always @(*) begin
                             RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else if (RRF_V_ARF_tags[5] == 1'b1) begin // Check if RRF is valid
                             RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = RRF_D_ARF_tag_5; // Operand available @ RRF
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_5) begin // Check if ALU1 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_5) begin // Check if ALU2 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_5) begin // Check if LS is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = LS_D; // Use LS_D as operand 1
                             RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_5 };
@@ -1022,6 +1335,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[6] == 1'b1) begin // Check if RRF is valid
                             RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = RRF_D_ARF_tag_6; // Operand available @ RRF
                             RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_6) begin // Check if ALU1 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_6) begin // Check if ALU2 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_6) begin // Check if LS is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = LS_D; // Use LS_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_6 };
                             RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b0; // Operand not available
@@ -1032,6 +1354,15 @@ always @(*) begin
                             RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else if (RRF_V_ARF_tags[7] == 1'b1) begin // Check if RRF is valid
                             RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = RRF_D_ARF_tag_7; // Operand available @ RRF
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_7) begin // Check if ALU1 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_7) begin // Check if ALU2 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_7) begin // Check if LS is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = LS_D; // Use LS_D as operand 1
                             RS_AL_2[RS_AL_ENTRY_SIZE-24] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_2[RS_AL_ENTRY_SIZE-8:RS_AL_ENTRY_SIZE-23] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_7 };
@@ -1059,6 +1390,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[1] == 1'b1) begin // Check if RRF is valid
                             RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = RRF_D_ARF_tag_1; // Operand available @ RRF
                             RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 2 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_1) begin // Check if ALU1 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_1) begin // Check if ALU2 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_1) begin // Check if LS is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = LS_D; // Use LS_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_1 };
                             RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b0; // Operand not available
@@ -1070,6 +1410,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[2] == 1'b1) begin // Check if RRF is valid
                             RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = RRF_D_ARF_tag_2; // Operand available @ RRF
                             RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 2 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_2) begin // Check if ALU1 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_2) begin // Check if ALU2 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_2) begin // Check if LS is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = LS_D; // Use LS_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_2 };
                             RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b0; // Operand not available
@@ -1081,6 +1430,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[3] == 1'b1) begin // Check if RRF is valid
                             RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = RRF_D_ARF_tag_3; // Operand available @ RRF
                             RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 2 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_3) begin // Check if ALU1 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_3) begin // Check if ALU2 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_3) begin // Check if LS is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = LS_D; // Use LS_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_3 };
                             RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b0; // Operand not available
@@ -1092,6 +1450,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[4] == 1'b1) begin // Check if RRF is valid
                             RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = RRF_D_ARF_tag_4; // Operand available @ RRF
                             RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 2 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_4) begin // Check if ALU1 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_4) begin // Check if ALU2 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_4) begin // Check if LS is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = LS_D; // Use LS_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_4 };
                             RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b0; // Operand not available
@@ -1103,6 +1470,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[5] == 1'b1) begin // Check if RRF is valid
                             RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = RRF_D_ARF_tag_5; // Operand available @ RRF
                             RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 2 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_5) begin // Check if ALU1 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_5) begin // Check if ALU2 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_5) begin // Check if LS is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = LS_D; // Use LS_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_5 };
                             RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b0; // Operand not available
@@ -1114,6 +1490,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[6] == 1'b1) begin // Check if RRF is valid
                             RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = RRF_D_ARF_tag_6; // Operand available @ RRF
                             RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 2 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_6) begin // Check if ALU1 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_6) begin // Check if ALU2 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_6) begin // Check if LS is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = LS_D; // Use LS_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_6 };
                             RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b0; // Operand not available
@@ -1125,6 +1510,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[7] == 1'b1) begin // Check if RRF is valid
                             RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = RRF_D_ARF_tag_7; // Operand available @ RRF
                             RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 2 valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_7) begin // Check if ALU1 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_7) begin // Check if ALU2 is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_7) begin // Check if LS is writing to R1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = LS_D; // Use LS_D as operand 1
+                            RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b1; // Set operand 1 valid
                         end else begin // Operand not available
                             RS_AL_2[RS_AL_ENTRY_SIZE-25:RS_AL_ENTRY_SIZE-40] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_7 };
                             RS_AL_2[RS_AL_ENTRY_SIZE-41] = 1'b0; // Operand not available
@@ -1160,6 +1554,12 @@ always @(*) begin
                     end else if (R_CZ_V_arch_C_tag == 1'b1) begin // Check if R_C is valid
                         RS_AL_2[RS_AL_ENTRY_SIZE-61:RS_AL_ENTRY_SIZE-68] = {(8){R_CZ_D_arch_C_tag}}; // C available @ R_C
                         RS_AL_2[RS_AL_ENTRY_SIZE-69] = 1'b1; // Set C valid
+                    end else if (ALU1_C_W == 1'b1 && ALU1_C_RR == arch_C_tag) begin // Check if ALU1 is writing to R1
+                        RS_AL_2[RS_AL_ENTRY_SIZE-61:RS_AL_ENTRY_SIZE-68] = {(8){ALU1_C}}; // Use ALU1_D as operand 1
+                        RS_AL_2[RS_AL_ENTRY_SIZE-69] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_C_W == 1'b1 && ALU2_C_RR == arch_C_tag) begin // Check if ALU2 is writing to R1
+                        RS_AL_2[RS_AL_ENTRY_SIZE-61:RS_AL_ENTRY_SIZE-68] =  {(8){ALU2_C}}; // Use ALU2_D as operand 1
+                        RS_AL_2[RS_AL_ENTRY_SIZE-69] = 1'b1; // Set operand 1 valid
                     end else begin // C not available
                         RS_AL_2[RS_AL_ENTRY_SIZE-61:RS_AL_ENTRY_SIZE-68] = arch_C_tag;
                         RS_AL_2[RS_AL_ENTRY_SIZE-69] = 1'b0; // C not available
@@ -1180,6 +1580,15 @@ always @(*) begin
                     end else if (R_CZ_V_arch_Z_tag == 1'b1) begin // Check if R_Z is valid
                         RS_AL_2[RS_AL_ENTRY_SIZE-70:RS_AL_ENTRY_SIZE-77] = {(8){R_CZ_D_arch_Z_tag}}; // X available @ R_Z
                         RS_AL_2[RS_AL_ENTRY_SIZE-78] = 1'b1; // Set Z valid
+                    end else if (ALU1_Z_W == 1'b1 && ALU1_Z_RR == arch_Z_tag) begin // Check if ALU1 is writing to R1
+                        RS_AL_2[RS_AL_ENTRY_SIZE-70:RS_AL_ENTRY_SIZE-77] = {(8){ALU1_Z}}; // Use ALU1_D as operand 1
+                        RS_AL_2[RS_AL_ENTRY_SIZE-78] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_Z_W == 1'b1 && ALU2_Z_RR == arch_Z_tag) begin // Check if ALU2 is writing to R1
+                        RS_AL_2[RS_AL_ENTRY_SIZE-70:RS_AL_ENTRY_SIZE-77] = {(8){ALU2_Z}}; // Use ALU2_D as operand 1
+                        RS_AL_2[RS_AL_ENTRY_SIZE-78] = 1'b1; // Set operand 1 valid
+                    end else if (LS_Z_W == 1'b1 && LS_Z_RR == arch_Z_tag) begin // Check if LS is writing to R1
+                        RS_AL_2[RS_AL_ENTRY_SIZE-70:RS_AL_ENTRY_SIZE-77] = LS_Z; // Use LS_D as operand 1
+                        RS_AL_2[RS_AL_ENTRY_SIZE-78] = 1'b1; // Set operand 1 valid
                     end else begin // Z not available
                         RS_AL_2[RS_AL_ENTRY_SIZE-70:RS_AL_ENTRY_SIZE-77] = arch_Z_tag;
                         RS_AL_2[RS_AL_ENTRY_SIZE-78] = 1'b0; // Z not available
@@ -1369,6 +1778,15 @@ always @(*) begin
                     end else if (RRF_V_ARF_tags[1] == 1'b1) begin // Check if RRF is valid
                         RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = RRF_D_ARF_tag_1; // Base available @ RRF
                         RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set Base valid
+                    end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_1) begin // Check if ALU1 is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU1_D; // Use ALU1_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_1) begin // Check if ALU2 is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU2_D; // Use ALU2_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_1) begin // Check if LS is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = LS_D; // Use LS_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
                     end else begin // Base not available
                         RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_1 };
                         RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b0; // Base not available
@@ -1380,6 +1798,15 @@ always @(*) begin
                     end else if (RRF_V_ARF_tags[2] == 1'b1) begin // Check if RRF is valid
                         RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = RRF_D_ARF_tag_2; // Base available @ RRF
                         RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set Base valid
+                    end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_2) begin // Check if ALU1 is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU1_D; // Use ALU1_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_2) begin // Check if ALU2 is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU2_D; // Use ALU2_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_2) begin // Check if LS is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = LS_D; // Use LS_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
                     end else begin // Base not available
                         RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_2 };
                         RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b0; // Base not available
@@ -1391,6 +1818,15 @@ always @(*) begin
                     end else if (RRF_V_ARF_tags[3] == 1'b1) begin // Check if RRF is valid
                         RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = RRF_D_ARF_tag_3; // Base available @ RRF
                         RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set Base valid
+                    end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_3) begin // Check if ALU1 is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU1_D; // Use ALU1_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_3) begin // Check if ALU2 is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU2_D; // Use ALU2_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_3) begin // Check if LS is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = LS_D; // Use LS_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
                     end else begin // Base not available
                         RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_3 };
                         RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b0; // Base not available
@@ -1402,6 +1838,15 @@ always @(*) begin
                     end else if (RRF_V_ARF_tags[4] == 1'b1) begin // Check if RRF is valid
                         RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = RRF_D_ARF_tag_4; // Base available @ RRF
                         RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set Base valid
+                    end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_4) begin // Check if ALU1 is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU1_D; // Use ALU1_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_4) begin // Check if ALU2 is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU2_D; // Use ALU2_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_4) begin // Check if LS is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = LS_D; // Use LS_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
                     end else begin // Base not available
                         RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_4 };
                         RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b0; // Base not available
@@ -1413,6 +1858,15 @@ always @(*) begin
                     end else if (RRF_V_ARF_tags[5] == 1'b1) begin // Check if RRF is valid
                         RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = RRF_D_ARF_tag_5; // Base available @ RRF
                         RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set Base valid
+                    end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_5) begin // Check if ALU1 is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU1_D; // Use ALU1_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_5) begin // Check if ALU2 is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU2_D; // Use ALU2_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_5) begin // Check if LS is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = LS_D; // Use LS_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
                     end else begin // Base not available
                         RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_5 };
                         RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b0; // Base not available
@@ -1424,6 +1878,15 @@ always @(*) begin
                     end else if (RRF_V_ARF_tags[6] == 1'b1) begin // Check if RRF is valid
                         RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = RRF_D_ARF_tag_6; // Base available @ RRF
                         RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set Base valid
+                    end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_6) begin // Check if ALU1 is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU1_D; // Use ALU1_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_6) begin // Check if ALU2 is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU2_D; // Use ALU2_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_6) begin // Check if LS is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = LS_D; // Use LS_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
                     end else begin // Base not available
                         RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_6 };
                         RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b0; // Base not available
@@ -1435,6 +1898,15 @@ always @(*) begin
                     end else if (RRF_V_ARF_tags[7] == 1'b1) begin // Check if RRF is valid
                         RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = RRF_D_ARF_tag_7; // Base available @ RRF
                         RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set Base valid
+                    end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_7) begin // Check if ALU1 is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU1_D; // Use ALU1_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_7) begin // Check if ALU2 is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = ALU2_D; // Use ALU2_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
+                    end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_7) begin // Check if LS is writing to R1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = LS_D; // Use LS_D as operand 1
+                        RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b1; // Set operand 1 valid
                     end else begin // Base not available
                         RS_LS_2[RS_LS_ENTRY_SIZE-3:RS_LS_ENTRY_SIZE-18] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_7 };
                         RS_LS_2[RS_LS_ENTRY_SIZE-19] = 1'b0; // Base not available
@@ -1459,6 +1931,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[1] == 1'b1) begin // Check if RRF is valid
                             RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = RRF_D_ARF_tag_1; // Source available @ RRF
                             RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set Source valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_1) begin // Check if ALU1 is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_1) begin // Check if ALU2 is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_1) begin // Check if LS is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = LS_D; // Use LS_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
                         end else begin // Source not available
                             RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_1 };
                             RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b0; // Source not available
@@ -1470,6 +1951,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[2] == 1'b1) begin // Check if RRF is valid
                             RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = RRF_D_ARF_tag_2; // Source available @ RRF
                             RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set Source valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_2) begin // Check if ALU1 is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_2) begin // Check if ALU2 is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_2) begin // Check if LS is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = LS_D; // Use LS_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
                         end else begin // Source not available
                             RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_2 };
                             RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b0; // Source not available
@@ -1481,6 +1971,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[3] == 1'b1) begin // Check if RRF is valid
                             RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = RRF_D_ARF_tag_3; // Source available @ RRF
                             RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set Source valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_3) begin // Check if ALU1 is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_3) begin // Check if ALU2 is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_3) begin // Check if LS is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = LS_D; // Use LS_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
                         end else begin // Source not available
                             RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_3 };
                             RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b0; // Source not available
@@ -1492,6 +1991,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[4] == 1'b1) begin // Check if RRF is valid
                             RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = RRF_D_ARF_tag_4; // Source available @ RRF
                             RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set Source valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_4) begin // Check if ALU1 is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_4) begin // Check if ALU2 is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_4) begin // Check if LS is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = LS_D; // Use LS_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
                         end else begin // Source not available
                             RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_4 };
                             RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b0; // Source not available
@@ -1503,6 +2011,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[5] == 1'b1) begin // Check if RRF is valid
                             RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = RRF_D_ARF_tag_5; // Source available @ RRF
                             RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set Source valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_5) begin // Check if ALU1 is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_5) begin // Check if ALU2 is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_5) begin // Check if LS is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = LS_D; // Use LS_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
                         end else begin // Source not available
                             RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_5 };
                             RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b0; // Source not available
@@ -1514,6 +2031,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[6] == 1'b1) begin // Check if RRF is valid
                             RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = RRF_D_ARF_tag_6; // Source available @ RRF
                             RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set Source valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_6) begin // Check if ALU1 is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_6) begin // Check if ALU2 is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_6) begin // Check if LS is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = LS_D; // Use LS_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
                         end else begin // Source not available
                             RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_6 };
                             RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b0; // Source not available
@@ -1525,6 +2051,15 @@ always @(*) begin
                         end else if (RRF_V_ARF_tags[7] == 1'b1) begin // Check if RRF is valid
                             RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = RRF_D_ARF_tag_7; // Source available @ RRF
                             RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set Source valid
+                        end else if (ALU1_D_W == 1'b1 && ALU1_D_RR == ARF_tag_7) begin // Check if ALU1 is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU1_D; // Use ALU1_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (ALU2_D_W == 1'b1 && ALU2_D_RR == ARF_tag_7) begin // Check if ALU2 is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = ALU2_D; // Use ALU2_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
+                        end else if (LS_D_W == 1'b1 && LS_D_RR == ARF_tag_7) begin // Check if LS is writing to R1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = LS_D; // Use LS_D as operand 1
+                            RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b1; // Set operand 1 valid
                         end else begin // Source not available
                             RS_LS_2[RS_LS_ENTRY_SIZE-36:RS_LS_ENTRY_SIZE-51] = { {(16-RRF_SIZE){1'b0}}, ARF_tag_7 };
                             RS_LS_2[RS_LS_ENTRY_SIZE-52] = 1'b0; // Source not available
