@@ -107,7 +107,7 @@ module InstructionMemory (
 );
 
     // Define memory with 64K x 8-bit storage (for 16-bit address space)
-    reg [7:0] mem [0:63];
+    reg [7:0] mem [0:127];
     
     initial begin
         // Load instructions (example values, replace with actual)

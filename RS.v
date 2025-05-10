@@ -1,23 +1,31 @@
 /*
 RS Arithmetic Logical :
     Table of 32 RS entries : 
-        1. Valid bit
-        2. OP Code + C/Z valid
-        3. Operand 1 + valid bit
-        4. Operand 2 + valid bit
-        5. Immediate
-        6. Neg of Operand 2 + C/Z conditions
-        7. C flag + C Valid
-        8. Z flag + Z Valid
-        9. Destination
-        10. Prev Destination
-        11. C dest
-        12. Z dest
-        13. Branch Prediction - T/NT
-        14. PC
-        15. ROB index
-        16. ARF destination
-        17. Ready
+        1. Valid (144)
+        2. Opcode (143-140)
+        3. CW (139)
+        4. ZW (138)
+        5. OPR_1 (137-122) (Tag is LSB 7 bits)
+        6. OPR1 valid (121)
+        7. OPR_2 (120-105) (Tag is LSB 7 bits)
+        8. OPR2 valid (104)
+        9. Imm (103-88) (Sign extended)
+        10. neg2 (87)
+        11. Carry condition (86)
+        12. Zero condition (85)
+        13. Carry flag value or tag (84-77) 
+        14. Carry valid (76)
+        15. Zero flag value or tag (75-68)
+        16. Zero valid (67)
+        17. RRF dest (66-60)
+        18. Prev dest (59-44)
+        19. Prev dest valid (43)
+        20. R_CZ carry dest (42-35)
+        21. R_CZ zero dest (34-27)
+        22. Branch pred (26)
+        23. PC (25-10)
+        24. ROB index (9-3)
+        25. ARF dest (2-0)
     Inputs :
         clk reset stall
         From decoder : valid bit + all data (x2)
@@ -54,7 +62,7 @@ module RS_ArithmeticLogical #(
     input  wire         clk,
     input  wire         reset,
     input  wire         stall,
-    input  wire         flush,
+    input  wire         flush,          // THIS DOES NOTHING FOR NOW
 
     // From Decoder (2 entries)
     input  wire         RS_AL_V1,
@@ -81,69 +89,289 @@ module RS_ArithmeticLogical #(
     output wire         rs_stall, // Fetch/decode stall signal
 
     // To ALU1
-    output wire         ALU1_V,
-    output wire [3:0]   ALU1_opcode,
-    output wire [15:0]  ALU1_opr1,
-    output wire [15:0]  ALU1_opr2,
-    output wire [15:0]  ALU1_imm,
-    output wire         ALU1_carry,
-    output wire         ALU1_zero,
-    output wire         ALU1_neg_opr2,
-    output wire [1:0]   ALU1_CZ_cond,
-    output wire [6:0]   ALU1_dest,
-    output wire [2:0]   ALU1_arch_dest,
-    output wire [15:0]  ALU1_prev_dest,
-    output wire [15:0]  ALU1_PC,
-    output wire [7:0]   ALU1_C_dest,
-    output wire [7:0]   ALU1_Z_dest,
-    output wire         ALU1_branch_pred,
-    output wire [6:0]   ALU1_ROB_index,
+    output reg         ALU1_V,
+    output reg [3:0]   ALU1_opcode,
+    output reg [15:0]  ALU1_opr1,
+    output reg [15:0]  ALU1_opr2,
+    output reg [15:0]  ALU1_imm,
+    output reg         ALU1_carry,
+    output reg         ALU1_zero,
+    output reg         ALU1_neg_opr2,
+    output reg [1:0]   ALU1_CZ_cond,
+    output reg [6:0]   ALU1_dest,
+    output reg [2:0]   ALU1_arch_dest,
+    output reg [15:0]  ALU1_prev_dest,
+    output reg [15:0]  ALU1_PC,
+    output reg [7:0]   ALU1_C_dest,
+    output reg [7:0]   ALU1_Z_dest,
+    output reg         ALU1_branch_pred,
+    output reg [6:0]   ALU1_ROB_index,
 
     // To ALU2 (same format as ALU1)
-    output wire         ALU2_V,
-    output wire [3:0]   ALU2_opcode,
-    output wire [15:0]  ALU2_opr1,
-    output wire [15:0]  ALU2_opr2,
-    output wire [15:0]  ALU2_imm,
-    output wire         ALU2_carry,
-    output wire         ALU2_zero,
-    output wire         ALU2_neg_opr2,
-    output wire [1:0]   ALU2_CZ_cond,
-    output wire [6:0]   ALU2_dest,
-    output wire [2:0]   ALU2_arch_dest,
-    output wire [15:0]  ALU2_prev_dest,
-    output wire [15:0]  ALU2_PC,
-    output wire [7:0]   ALU2_C_dest,
-    output wire [7:0]   ALU2_Z_dest,
-    output wire         ALU2_branch_pred,
-    output wire [6:0]   ALU2_ROB_index
+    output reg         ALU2_V,
+    output reg [3:0]   ALU2_opcode,
+    output reg [15:0]  ALU2_opr1,
+    output reg [15:0]  ALU2_opr2,
+    output reg [15:0]  ALU2_imm,
+    output reg         ALU2_carry,
+    output reg         ALU2_zero,
+    output reg         ALU2_neg_opr2,
+    output reg [1:0]   ALU2_CZ_cond,
+    output reg [6:0]   ALU2_dest,
+    output reg [2:0]   ALU2_arch_dest,
+    output reg [15:0]  ALU2_prev_dest,
+    output reg [15:0]  ALU2_PC,
+    output reg [7:0]   ALU2_C_dest,
+    output reg [7:0]   ALU2_Z_dest,
+    output reg         ALU2_branch_pred,
+    output reg [6:0]   ALU2_ROB_index,
+
+    // Check values
+    output reg [4:0]   empty_pos1,
+    output reg [4:0]   empty_pos2
 );
 
 // Internal storage
+// Registers for all RS entries
 reg         valid       [31:0];
 reg [3:0]   opcode      [31:0];
-reg         opr1_valid  [31:0];
+reg         cw          [31:0];
+reg         zw          [31:0];
 reg [15:0]  opr1        [31:0];
-reg         opr2_valid  [31:0];
+reg         opr1_valid  [31:0];
 reg [15:0]  opr2        [31:0];
+reg         opr2_valid  [31:0];
 reg [15:0]  imm         [31:0];
+reg         neg2        [31:0];
+reg         carry_cond  [31:0];
+reg         zero_cond   [31:0];
+reg [7:0]   carry_flag  [31:0];
 reg         carry_valid [31:0];
-reg         carry       [31:0];
+reg [7:0]   zero_flag   [31:0];
 reg         zero_valid  [31:0];
-reg         zero        [31:0];
-reg [1:0]   cz_cond     [31:0];
-reg         neg_opr2    [31:0];
-reg [6:0]   dest        [31:0];
-reg [2:0]   arch_dest   [31:0];
+reg [6:0]   rrf_dest    [31:0];
 reg [15:0]  prev_dest   [31:0];
-reg [7:0]   c_dest      [31:0];
-reg [7:0]   z_dest      [31:0];
+reg         prev_dest_valid [31:0];
+reg [7:0]   r_cz_carry_dest [31:0];
+reg [7:0]   r_cz_zero_dest  [31:0];
 reg         branch_pred [31:0];
 reg [15:0]  pc          [31:0];
 reg [6:0]   rob_index   [31:0];
-reg         ready       [31:0];
+reg [2:0]   arf_dest    [31:0];
 
-// Additional logic to be constructed
+// To-Do
+// Check if 2 entries are free
+// if 2 entries are free, accept input for RS_AL_1 and RS_AL_2
+// else stall the fetch/decode stage
+// Check if 2 entries are ready
+// if 2 entries are ready, issue to ALU1 and ALU2 and mark corresponding valid to 0
+// Check if ALU1/2 or LS have written back, if yes, update the corresponding opr with the new value and set opr_valid bit to 1, if all valid bits are 1, set valid bit to 1
+
+integer i;
+integer issued = 0;
+
+// Count free entries
+integer free_count;
+always @(*) begin
+    free_count = 0;
+    for (i = 0; i < 32; i = i + 1) begin
+        if (!valid[i]) free_count = free_count + 1;
+    end
+end
+
+assign rs_stall = (free_count < 2);
+
+// Helper function: check for free slot
+integer idx1, idx2;
+
+task automatic find_two_free_entries(output integer out1, output integer out2);
+    integer j;
+    begin
+        out1 = -1;
+        out2 = -1;
+        for (j = 0; j < 32; j = j + 1) begin
+            if (!valid[j] && !(
+                    (ALU1_D_W && ALU1_D_RR == opr1[j][6:0]) ||
+                    (ALU2_D_W && ALU2_D_RR == opr1[j][6:0]) ||
+                    (LS_D_W   && LS_D_RR   == opr1[j][6:0]) ||
+                    (ALU1_D_W && ALU1_D_RR == opr2[j][6:0]) ||
+                    (ALU2_D_W && ALU2_D_RR == opr2[j][6:0]) ||
+                    (LS_D_W   && LS_D_RR   == opr2[j][6:0])
+                )) begin
+                if (out1 == -1) out1 = j;
+                else if (out2 == -1) begin
+                    out2 = j;
+                    disable find_two_free_entries; // ✅ legal inside task
+                end
+            end
+        end
+    end
+endtask
+
+// Combined insertion and write-back logic
+always @(posedge clk or posedge reset) begin
+    if (reset) begin
+        for (i = 0; i < 32; i = i + 1) begin
+            valid[i] <= 0;
+            opr1_valid[i] <= 0;
+            opr2_valid[i] <= 0;
+            carry_valid[i] <= 0;
+            zero_valid[i] <= 0;
+            prev_dest_valid[i] <= 0;
+        end
+        ALU1_V <= 0;
+        ALU2_V <= 0;
+        issued = 0;
+    end else begin
+        ALU1_V <= 0;
+        ALU2_V <= 0;
+        // Write-back forwarding
+        for (i = 0; i < 32; i = i + 1) begin
+            if (valid[i]) begin
+                if (!opr1_valid[i]) begin
+                    if (ALU1_D_W && ALU1_D_RR == opr1[i][6:0]) begin
+                        opr1[i] <= ALU1_D;
+                        opr1_valid[i] <= 1;
+                    end else if (ALU2_D_W && ALU2_D_RR == opr1[i][6:0]) begin
+                        opr1[i] <= ALU2_D;
+                        opr1_valid[i] <= 1;
+                    end else if (LS_D_W && LS_D_RR == opr1[i][6:0]) begin
+                        opr1[i] <= LS_D;
+                        opr1_valid[i] <= 1;
+                    end
+                end
+                if (!opr2_valid[i]) begin
+                    if (ALU1_D_W && ALU1_D_RR == opr2[i][6:0]) begin
+                        opr2[i] <= ALU1_D;
+                        opr2_valid[i] <= 1;
+                    end else if (ALU2_D_W && ALU2_D_RR == opr2[i][6:0]) begin
+                        opr2[i] <= ALU2_D;
+                        opr2_valid[i] <= 1;
+                    end else if (LS_D_W && LS_D_RR == opr2[i][6:0]) begin
+                        opr2[i] <= LS_D;
+                        opr2_valid[i] <= 1;
+                    end
+                end
+            end
+        end
+
+        // Issue to ALU1/2
+        issued = 0;
+        for (i = 0; i < 32 && issued < 2; i = i + 1) begin
+            if (valid[i] && opr1_valid[i] && opr2_valid[i]) begin
+                if (!ALU1_V) begin
+                    ALU1_V <= 1;
+                    ALU1_opcode <= opcode[i];
+                    ALU1_opr1 <= opr1[i];
+                    ALU1_opr2 <= opr2[i];
+                    ALU1_imm <= imm[i];
+                    ALU1_carry <= carry_valid[i];
+                    ALU1_zero <= zero_valid[i];
+                    ALU1_neg_opr2 <= neg2[i];
+                    ALU1_CZ_cond <= {carry_cond[i], zero_cond[i]};
+                    ALU1_dest <= rrf_dest[i];
+                    ALU1_arch_dest <= arf_dest[i];
+                    ALU1_prev_dest <= prev_dest[i];
+                    ALU1_PC <= pc[i];
+                    ALU1_C_dest <= r_cz_carry_dest[i];
+                    ALU1_Z_dest <= r_cz_zero_dest[i];
+                    ALU1_branch_pred <= branch_pred[i];
+                    ALU1_ROB_index <= rob_index[i];
+                    valid[i] <= 0;
+                    issued = issued + 1;
+                end else if (!ALU2_V) begin
+                    ALU2_V <= 1;
+                    ALU2_opcode <= opcode[i];
+                    ALU2_opr1 <= opr1[i];
+                    ALU2_opr2 <= opr2[i];
+                    ALU2_imm <= imm[i];
+                    ALU2_carry <= carry_valid[i];
+                    ALU2_zero <= zero_valid[i];
+                    ALU2_neg_opr2 <= neg2[i];
+                    ALU2_CZ_cond <= {carry_cond[i], zero_cond[i]};
+                    ALU2_dest <= rrf_dest[i];
+                    ALU2_arch_dest <= arf_dest[i];
+                    ALU2_prev_dest <= prev_dest[i];
+                    ALU2_PC <= pc[i];
+                    ALU2_C_dest <= r_cz_carry_dest[i];
+                    ALU2_Z_dest <= r_cz_zero_dest[i];
+                    ALU2_branch_pred <= branch_pred[i];
+                    ALU2_ROB_index <= rob_index[i];
+                    valid[i] <= 0;
+                    issued = issued + 1;
+                end
+            end
+        end
+
+        // Insertion
+        if (!stall && free_count >= 2) begin
+            idx1 = -1;
+            idx2 = -1;
+            find_two_free_entries(idx1, idx2);
+            empty_pos1 <= (idx1 == -1) ? 5'b11111 : idx1[4:0];
+            empty_pos2 <= (idx2 == -1) ? 5'b11111 : idx2[4:0];
+            if (RS_AL_V1) begin
+                if (idx1 != -1) begin
+                    valid[idx1]          <= RS_AL_1[144];
+                    opcode[idx1]         <= RS_AL_1[143:140];
+                    cw[idx1]             <= RS_AL_1[139];
+                    zw[idx1]             <= RS_AL_1[138];
+                    opr1[idx1]           <= RS_AL_1[137:122];
+                    opr1_valid[idx1]     <= RS_AL_1[121];
+                    opr2[idx1]           <= RS_AL_1[120:105];
+                    opr2_valid[idx1]     <= RS_AL_1[104];
+                    imm[idx1]            <= RS_AL_1[103:88];
+                    neg2[idx1]           <= RS_AL_1[87];
+                    carry_cond[idx1]     <= RS_AL_1[86];
+                    zero_cond[idx1]      <= RS_AL_1[85];
+                    carry_flag[idx1]     <= RS_AL_1[84:77];
+                    carry_valid[idx1]    <= RS_AL_1[76];
+                    zero_flag[idx1]      <= RS_AL_1[75:68];
+                    zero_valid[idx1]     <= RS_AL_1[67];
+                    rrf_dest[idx1]       <= RS_AL_1[66:60];
+                    prev_dest[idx1]      <= RS_AL_1[59:44];
+                    prev_dest_valid[idx1]<= RS_AL_1[43];
+                    r_cz_carry_dest[idx1]<= RS_AL_1[42:35];
+                    r_cz_zero_dest[idx1] <= RS_AL_1[34:27];
+                    branch_pred[idx1]    <= RS_AL_1[26];
+                    pc[idx1]             <= RS_AL_1[25:10];
+                    rob_index[idx1]      <= RS_AL_1[9:3];
+                    arf_dest[idx1]       <= RS_AL_1[2:0];
+                end
+            end
+            if (RS_AL_V2) begin
+                if (idx2 != -1) begin
+                    valid[idx2]          <= RS_AL_2[144];
+                    opcode[idx2]         <= RS_AL_2[143:140];
+                    cw[idx2]             <= RS_AL_2[139];
+                    zw[idx2]             <= RS_AL_2[138];
+                    opr1[idx2]           <= RS_AL_2[137:122];
+                    opr1_valid[idx2]     <= RS_AL_2[121];
+                    opr2[idx2]           <= RS_AL_2[120:105];
+                    opr2_valid[idx2]     <= RS_AL_2[104];
+                    imm[idx2]            <= RS_AL_2[103:88];
+                    neg2[idx2]           <= RS_AL_2[87];
+                    carry_cond[idx2]     <= RS_AL_2[86];
+                    zero_cond[idx2]      <= RS_AL_2[85];
+                    carry_flag[idx2]     <= RS_AL_2[84:77];
+                    carry_valid[idx2]    <= RS_AL_2[76];
+                    zero_flag[idx2]      <= RS_AL_2[75:68];
+                    zero_valid[idx2]     <= RS_AL_2[67];
+                    rrf_dest[idx2]       <= RS_AL_2[66:60];
+                    prev_dest[idx2]      <= RS_AL_2[59:44];
+                    prev_dest_valid[idx2]<= RS_AL_2[43];
+                    r_cz_carry_dest[idx2]<= RS_AL_2[42:35];
+                    r_cz_zero_dest[idx2] <= RS_AL_2[34:27];
+                    branch_pred[idx2]    <= RS_AL_2[26];
+                    pc[idx2]             <= RS_AL_2[25:10];
+                    rob_index[idx2]      <= RS_AL_2[9:3];
+                    arf_dest[idx2]       <= RS_AL_2[2:0];
+                end
+            end
+        end
+    end
+end
+
 
 endmodule
 
@@ -193,7 +421,7 @@ module RS_LoadStore #(
     input  wire         clk,
     input  wire         reset,
     input  wire         stall,
-    input  wire         flush,
+    input  wire         flush,          // THIS DOES NOTHING FOR NOW
 
     // From Decoder (2 entries)
     input  wire         RS_LS_V1,
@@ -220,38 +448,166 @@ module RS_LoadStore #(
     output wire         rs_stall,  // If < 2 slots available
 
     // To Load/Store Unit
-    output wire         LS_V1,
-    output wire         Load_Store,
-    output wire [15:0]  Base,
-    output wire [15:0]  Offset,
-    output wire [15:0]  Source_Data,
-    output wire [6:0]   dest,
-    output wire [2:0]   arch_dest_ls,
-    output wire [7:0]   Z_dest,
-    output wire [4:0]   SB_index,
-    output wire [6:0]   ROB_index,
-    output wire         is_LMSM
+    output reg         LS_V1,
+    output reg         Load_Store,
+    output reg [15:0]  Base,
+    output reg [15:0]  Offset,
+    output reg [15:0]  Source_Data,
+    output reg [6:0]   dest,
+    output reg [2:0]   arch_dest_ls,
+    output reg [7:0]   Z_dest,
+    output reg [4:0]   SB_index,
+    output reg [6:0]   ROB_index,
+    output reg         is_LMSM,
+
+    // Check values
+    output reg [4:0]   empty_pos1
 );
 
 // Internal storage
-reg         valid       [31:0];
-reg         load_store  [31:0];
-reg [15:0]  base        [31:0];
-reg         base_valid  [31:0];
-reg [15:0]  offset      [31:0];
-reg [15:0]  source_data [31:0];
-reg         source_valid[31:0];
-reg [4:0]   sb_index    [31:0];
-reg [6:0]   rr_addr     [31:0];
-reg [6:0]   rob_index_r [31:0];
-reg [2:0]   arch_dest   [31:0];
-reg [7:0]   z_dest      [31:0];
-reg         is_lmsm     [31:0];
+reg         valid        [31:0];
+reg         load_store   [31:0];
+reg [15:0]  base         [31:0];
+reg         base_valid   [31:0];
+reg [15:0]  offset       [31:0];
+reg [15:0]  source_data  [31:0];
+reg         source_valid [31:0];
+reg [4:0]   sb_index     [31:0];
+reg [6:0]   rr_addr      [31:0];
+reg [6:0]   rob_index_r  [31:0];
+reg [2:0]   arch_dest    [31:0];
+reg [7:0]   z_dest       [31:0];
+reg         is_lmsm      [31:0];
 
 // Additional logic to be implemented
 // - Entry insertion (from decoder)
 // - Operand/tag broadcast update (from ALU/LS)
 // - Issue logic (determine ready entries to issue to LS)
 // - rs_stall output based on # of free entries
+
+integer i, issued = 0;
+
+integer free_count;
+always @(*) begin
+    free_count = 0;
+    for (i = 0; i < 32; i = i + 1) begin
+        if (!valid[i])
+            free_count = free_count + 1;
+    end
+end
+
+assign rs_stall = (free_count < 2);
+
+integer idx1;
+
+task automatic find_one_free_entries(output integer out);
+    integer j;
+    begin
+        out = -1;
+        for (j = 0; j < 32; j = j + 1) begin
+            if (!valid[j] && !(
+                    (ALU1_D_W && ALU1_D_RR == base[j][6:0]) ||
+                    (ALU2_D_W && ALU2_D_RR == base[j][6:0]) ||
+                    (LS_D_W   && LS_D_RR   == base[j][6:0]) ||
+                    (ALU1_D_W && ALU1_D_RR == source_data[j][6:0]) ||
+                    (ALU2_D_W && ALU2_D_RR == source_data[j][6:0]) ||
+                    (LS_D_W   && LS_D_RR   == source_data[j][6:0])
+                )) begin
+                if (out == -1) begin
+                    out = j;
+                    disable find_one_free_entries; // ✅ legal inside task
+                end
+            end
+        end
+    end
+endtask
+
+// Combined insertion and write-back logic
+always @(posedge clk or posedge reset) begin
+    if (reset) begin
+        for (i = 0; i < 32; i = i + 1) begin
+            valid[i]       <= 0;
+            base_valid[i]  <= 0;
+            source_valid[i]<= 0;    
+        end
+        LS_V1 <= 0;
+    end else begin
+        LS_V1 <= 0;
+        // Write-back forwarding
+        for (i = 0; i < 32; i = i + 1) begin
+            if (valid[i]) begin
+                if (!base_valid[i]) begin
+                    if (ALU1_D_W && ALU1_D_RR == base[i][6:0]) begin
+                        base[i] <= ALU1_D;
+                        base_valid[i] <= 1;
+                    end else if (ALU2_D_W && ALU2_D_RR == base[i][6:0]) begin
+                        base[i] <= ALU2_D;
+                        base_valid[i] <= 1;
+                    end else if (LS_D_W && LS_D_RR == base[i][6:0]) begin
+                        base[i] <= LS_D;
+                        base_valid[i] <= 1;
+                    end
+                end
+                if (!source_valid[i]) begin
+                    if (ALU1_D_W && ALU1_D_RR == source_data[i][6:0]) begin
+                        source_data[i] <= ALU1_D;
+                        source_valid[i] <= 1;
+                    end else if (ALU2_D_W && ALU2_D_RR == source_data[i][6:0]) begin
+                        source_data[i] <= ALU2_D;
+                        source_valid[i] <= 1;
+                    end else if (LS_D_W && LS_D_RR == source_data[i][6:0]) begin
+                        source_data[i] <= LS_D;
+                        source_valid[i] <= 1;
+                    end
+                end
+            end
+        end
+
+        // Issue to LS
+        issued = 0;
+        for (i = 0; i < 32 && issued < 2; i = i + 1) begin
+            if (valid[i] && base_valid[i] && source_valid[i]) begin
+                if (!LS_V1) begin
+                    LS_V1 <= 1;
+                    Load_Store <= load_store[i];
+                    Base <= base[i];
+                    Offset <= offset[i];
+                    Source_Data <= source_data[i];
+                    dest <= rr_addr[i];
+                    arch_dest_ls <= arch_dest[i];
+                    Z_dest <= z_dest[i];
+                    SB_index <= sb_index[i];
+                    ROB_index <= rob_index_r[i];
+                    is_LMSM <= is_lmsm[i];
+                    valid[i] <= 0;
+                    issued = issued + 1;
+                end
+            end
+        end
+
+        // Insertion
+        if (!stall && free_count >= 2) begin
+            idx1 = -1;
+            find_one_free_entries(idx1);
+            empty_pos1 <= (idx1 == -1) ? 5'b11111 : idx1[4:0];
+            if (RS_LS_V1) begin
+                if (idx1 != -1) begin
+                    valid[idx1]       <= RS_LS_1[74];
+                    load_store[idx1]  <= RS_LS_1[73];
+                    base[idx1]        <= RS_LS_1[72:57];
+                    base_valid[idx1]  <= RS_LS_1[56];
+                    offset[idx1]      <= RS_LS_1[55:40];
+                    source_data[idx1] <= RS_LS_1[39:24];
+                    source_valid[idx1]<= RS_LS_1[23];
+                    sb_index[idx1]    <= RS_LS_1[22:18];
+                    rr_addr[idx1]     <= RS_LS_1[17:11];
+                    rob_index_r[idx1] <= RS_LS_1[10:4];
+                    arch_dest[idx1]   <= RS_LS_1[3:0];
+                    is_lmsm[idx1]     <= RS_LS_1[0];
+                end
+            end
+        end
+    end
+end
 
 endmodule
