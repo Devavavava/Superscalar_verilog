@@ -18,7 +18,7 @@ module Full_tb;
         .R_CZ_SIZE(8),
         .RS_AL_ENTRY_SIZE(145),
         .RS_LS_ENTRY_SIZE(75),
-        .ROB_ENTRY_SIZE(44)
+        .ROB_ENTRY_SIZE(51)
     ) uut (
         .clk(clk),
         .stall(stall),

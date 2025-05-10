@@ -5,7 +5,7 @@ module Assembled_Superscalar #(
     parameter R_CZ_SIZE         = 8,
     parameter RS_AL_ENTRY_SIZE  = 145,
     parameter RS_LS_ENTRY_SIZE  = 75,
-    parameter ROB_ENTRY_SIZE    = 44
+    parameter ROB_ENTRY_SIZE    = 51
 )(
 	input wire clk,				// external clock
 	input wire stall,			// external stall
@@ -191,10 +191,34 @@ wire [6:0] ALU_to_ROB_index1, ALU_to_ROB_index2; // to ROB
 wire LS_branch_mispred, LS_ROB_W;
 wire [15:0] LS_new_PC;
 wire [6:0] LS_to_ROB_index; 
+wire [15:0] SB_search_addr;
+wire SB_W;
+wire [4:0] SB_index_out;
+wire [15:0] SB_addr_out;
+wire [15:0] SB_data_out;
+
 // ----------------------------------------------------------------------------
+
+// ROB inputs
+wire [4:0] SB_free_1, SB_free_2;
 
 // ROB outputs
 wire ROB_stall;
+wire ROB_SB_V1, ROB_SB_V2; 
+wire [4:0] ROB_SB_Addr1, ROB_SB_Addr2;
+wire [15:0] ROB_SB_PC1, ROB_SB_PC2;
+
+// ----------------------------------------------------------------------------
+
+// LS unit inputs
+wire SB_LS_match;
+wire [15:0] SB_LS_data;
+
+// ----------------------------------------------------------------------------
+
+wire IF_ID_PR_flush;
+wire ROB_flush;
+
 // Instantiate FetchStage
 FetchStage fetch_stage_inst (
     .clk(clk),					// external clock
@@ -379,7 +403,7 @@ Decoder decoder_inst (
 
 
 
-
+	// Forward from execture to decoder
 	.ALU1_D_W(ALU1_D_W),
 	.ALU1_D(ALU1_D),
 	.ALU1_D_RR(ALU1_D_RR),
@@ -744,8 +768,8 @@ load_store_unit load_store_unit_inst (
 	.ROB_index(LS_ROB_index),
 	.is_LMSM(LS_is_LMSM),
 
-	.SB_match(),
-	.SB_data(),
+	.SB_match(SB_LS_match),
+	.SB_data(SB_LS_data),
 
 	.L1d_data(),
 
@@ -761,11 +785,11 @@ load_store_unit load_store_unit_inst (
 	.LS_Z(),
 
 	// For Store Buffer
-	.SB_search_addr(),
-	.SB_W(),
-	.SB_index_out(),
-	.SB_addr_out(),
-	.SB_data_out(),
+	.SB_search_addr(SB_search_addr),
+	.SB_W(SB_W),
+	.SB_index_out(SB_index_out),
+	.SB_addr_out(SB_addr_out),
+	.SB_data_out(SB_data_out),
 
 	// For ROB
 	.ROB_W(LS_ROB_W),
@@ -780,7 +804,7 @@ load_store_unit load_store_unit_inst (
 
 // Instantiate ROB
 ROB #(
-	.ROB_ENTRY_SIZE(44),
+	.ROB_ENTRY_SIZE(51),
 	.ROB_INDEX_SIZE(7),
 	.RRF_SIZE(7),
 	.R_CZ_SIZE(8),
@@ -816,10 +840,6 @@ ROB #(
 	.LSU_valid(LS_D_W),
 	.LSU_index(LS_to_ROB_index),
 
-	// From Store Buffer
-	.SB_Addr1(0), // Placeholder, connect as needed
-	.SB_Addr2(0), // Placeholder, connect as needed
-
 	// To RRF
 	.ROB_Retire1_V(ROB_RRF_W1),
 	.ROB_Retire1_ARF_Addr(ROB_RRF_writeidx1),
@@ -839,19 +859,77 @@ ROB #(
 	.ROB_Retire2_Z_Addr(),
 
 	// To Store Buffer
-	.ROB_Retire1_SB_V(),
-	.ROB_Retire1_SB_Addr(),
-	.ROB_Retire1_HeadPC(),
-	.ROB_Retire2_SB_V(),
-	.ROB_Retire2_SB_Addr(),
-	.ROB_Retire2_HeadPC(),
+	.ROB_Retire1_SB_V(ROB_SB_V1),
+	.ROB_Retire1_SB_Addr(ROB_SB_Addr1),
+	// .ROB_Retire1_HeadPC(ROB_SB_PC1),
+	.ROB_Retire2_SB_V(ROB_SB_V2),
+	.ROB_Retire2_SB_Addr(ROB_SB_Addr2),
+	// .ROB_Retire2_HeadPC(ROB_SB_PC2),
 
 	// To Decoder
 	.ROB_index_1(ROB_idx_1),
 	.ROB_index_2(ROB_idx_2),
 
 	// Stall output in case of ROB full
-	.ROB_stall(ROB_stall)
+	.ROB_stall(ROB_stall),
+	.Global_Flush(ROB_flush)
 );
+
+// Instantiate SB
+// Instantiate StoreBuffer
+StoreBuffer store_buffer_inst (
+	.CLK(clk),
+	.RST(reset),
+
+	// Inputs
+	// Decode Stage
+	.clear_speculative(),          // connect flush to clear speculative
+	.reserve_1(SB_reserve_1),
+	.reserve_2(SB_reserve_2),
+
+	// Execute Stage
+	.LS_W(SB_W),
+	.LS_index(SB_index_out),
+	.LS_addr(SB_addr_out),
+	.LS_data(SB_data_out),
+
+	// Load/Store Stage for load enquiry
+	.LS_search_addr(SB_search_addr),
+
+	// Writeback Stage
+	.pop_head(),
+
+	// Retiring Stage
+	.ROB_W({6'b0, ROB_SB_V1, ROB_SB_V2}), // combined ROB_SB_V1 and ROB_SB_V2 with 6 zeros padding
+	.SB_index({30'b0, ROB_SB_Addr1, ROB_SB_Addr2}), // combined ROB_SB_Addr1 and ROB_SB_Addr2 with 30 zeros padding
+
+	// Outputs
+	// To decoder
+	.free_index_1(SB_free_1),
+	.free_index_2(SB_free_2),
+	.stall(),                           // not connected
+
+	// To L1-D Cache
+	.head_valid(),                      // not connected
+	.head_addr(),                       // not connected
+	.head_data(),                       // not connected
+
+	// For loads store unit
+	.LS_match(SB_LS_match),
+	.LS_search_data(SB_LS_data)
+);
+
+
+// // Instantiate Data Memory (L1-D Cache)
+// module DataMemory(
+//     input         clk,
+//     input         Read,
+//     input         Write,
+//     input  [15:0] Addr,     // full 16-bit address
+//     input  [15:0] D_In,     // Data input for write operations
+//     output reg [15:0] D_Out // Data output: concatenation of two 8-bit values
+// );
+
+
 
 endmodule

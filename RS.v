@@ -680,7 +680,7 @@ always @(posedge clk or posedge reset) begin
                     sb_index[idx1]    <= RS_LS_1[22:18];
                     rr_addr[idx1]     <= RS_LS_1[17:11];
                     rob_index_r[idx1] <= RS_LS_1[10:4];
-                    arch_dest[idx1]   <= RS_LS_1[3:0];
+                    arch_dest[idx1]   <= RS_LS_1[3:1];
                     is_lmsm[idx1]     <= RS_LS_1[0];
                 end
             end

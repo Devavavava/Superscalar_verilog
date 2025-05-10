@@ -86,7 +86,7 @@ reg [15:0]  data   [127:0];
 
 // Empty slot detection
 integer i;
-reg [4:0] empty1, empty2;
+reg [6:0] empty1, empty2;
 reg empty_found1, empty_found2;
 always @(*) begin
     empty_found1 = 0;

@@ -87,25 +87,34 @@ module StoreBuffer(
         free_2 <= tail + 5'd2;
     end
     
+    task automatic search_loop_for_match(
+        output integer out, 
+        output reg match_found_out, 
+        output reg [15:0] match_data_out
+    );
+        integer j;
+        begin
+            out = tail;
+            match_found_out = 0;
+            match_data_out = 16'h0000;
+            for (j = 0; j < 32; j = j + 1) begin
+                if (valid[out] && executed[out] && retired[out] && (addr[out] == LS_search_addr)) begin
+                    match_found_out = 1;
+                    match_data_out = data[out];
+                    disable search_loop_for_match; // Exit the task once a match is found
+                end
+                
+                // Move towards front, with wrap-around
+                out = (out == 0) ? 31 : out - 1;
+                if (out == tail) disable search_loop_for_match; // We've gone full circle
+            end
+        end
+    endtask
+
+
     // Search for matching address
     always @(*) begin
-        match_found = 0;
-        match_data = 16'h0000;
-        
-        // Search from back (newest) to front (oldest)
-        i = tail;
-
-        search_loop : for (j = 0; j < 32; j = j + 1) begin
-            if (valid[i] && executed[i] && retired[i] && (addr[i] == LS_search_addr)) begin
-                match_found = 1;
-                match_data = data[i];
-                disable search_loop; // Take the most recent match
-            end
-            
-            // Move towards front, with wrap-around
-            i = (i == 0) ? 31 : i - 1;
-            if (i == tail) disable search_loop; // We've gone full circle
-        end
+        search_loop_for_match(i, match_found, match_data);
     end
     
     // Main control logic
