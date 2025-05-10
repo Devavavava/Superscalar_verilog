@@ -26,49 +26,49 @@ module RRF (
     input  wire         write1_en,
     input  wire         write2_en,
     input  wire         write3_en,
-    input  wire [4:0]   write1_idx,
-    input  wire [4:0]   write2_idx,
-    input  wire [4:0]   write3_idx,
+    input  wire [6:0]   write1_idx,
+    input  wire [6:0]   write2_idx,
+    input  wire [6:0]   write3_idx,
     input  wire [15:0]  write1_data,
     input  wire [15:0]  write2_data,
     input  wire [15:0]  write3_data,
 
     // From ARF
-    input  wire [4:0]   ARF_tag_1,
-    input  wire [4:0]   ARF_tag_2,
-    input  wire [4:0]   ARF_tag_3,
-    input  wire [4:0]   ARF_tag_4,
-    input  wire [4:0]   ARF_tag_5,
-    input  wire [4:0]   ARF_tag_6,
-    input  wire [4:0]   ARF_tag_7,
+    input  wire [6:0]   ARF_tag_1,
+    input  wire [6:0]   ARF_tag_2,
+    input  wire [6:0]   ARF_tag_3,
+    input  wire [6:0]   ARF_tag_4,
+    input  wire [6:0]   ARF_tag_5,
+    input  wire [6:0]   ARF_tag_6,
+    input  wire [6:0]   ARF_tag_7,
 
     // From ROB
     input  wire         rob_write_valid1,
     input  wire [2:0]   rob_write_index1,
-    input  wire [4:0]   rob_rrf_read_idx1,
+    input  wire [6:0]   rob_rrf_read_idx1,
     input  wire         rob_write_valid2,
     input  wire [2:0]   rob_write_index2,
-    input  wire [4:0]   rob_rrf_read_idx2,
+    input  wire [6:0]   rob_rrf_read_idx2,
 
     // To Decode
     output wire         two_empty_available,
-    output reg  [4:0]   empty_pos1_idx,
-    output reg  [4:0]   empty_pos2_idx,
+    output reg  [6:0]   empty_pos1_idx,
+    output reg  [6:0]   empty_pos2_idx,
 
-    output wire [15:0]  ARF_data_1,
-    output wire         ARF_valid_1,
-    output wire [15:0]  ARF_data_2,
-    output wire         ARF_valid_2,
-    output wire [15:0]  ARF_data_3,
-    output wire         ARF_valid_3,
-    output wire [15:0]  ARF_data_4,
-    output wire         ARF_valid_4,
-    output wire [15:0]  ARF_data_5,
-    output wire         ARF_valid_5,
-    output wire [15:0]  ARF_data_6,
-    output wire         ARF_valid_6,
-    output wire [15:0]  ARF_data_7,
-    output wire         ARF_valid_7,
+    output wire [15:0]  RRF_data_1,
+    output wire         RRF_valid_1,
+    output wire [15:0]  RRF_data_2,
+    output wire         RRF_valid_2,
+    output wire [15:0]  RRF_data_3,
+    output wire         RRF_valid_3,
+    output wire [15:0]  RRF_data_4,
+    output wire         RRF_valid_4,
+    output wire [15:0]  RRF_data_5,
+    output wire         RRF_valid_5,
+    output wire [15:0]  RRF_data_6,
+    output wire         RRF_valid_6,
+    output wire [15:0]  RRF_data_7,
+    output wire         RRF_valid_7,
 
     // To ARF
     output reg          ARF_write_valid1,
@@ -80,9 +80,9 @@ module RRF (
 );
 
 // Internal RRF register file: 32 entries with Busy, Valid, and Data
-reg         busy   [31:0];
-reg         valid  [31:0];
-reg [15:0]  data   [31:0];
+reg         busy   [127:0];
+reg         valid  [127:0];
+reg [15:0]  data   [127:0];
 
 // Empty slot detection
 integer i;
@@ -93,13 +93,13 @@ always @(*) begin
     empty_found2 = 0;
     empty1 = 0;
     empty2 = 0;
-    for (i = 0; i < 32; i = i + 1) begin
+    for (i = 0; i < 128; i = i + 1) begin
         if (!busy[i]) begin
             if (!empty_found1) begin
-                empty1 = i[4:0];
+                empty1 = i[6:0];
                 empty_found1 = 1;
             end else if (!empty_found2) begin
-                empty2 = i[4:0];
+                empty2 = i[6:0];
                 empty_found2 = 1;
             end
         end
@@ -116,7 +116,7 @@ end
 always @(posedge clk) begin
     if (!stall) begin
         if (flush) begin
-            for (i = 0; i < 32; i = i + 1) begin
+            for (i = 0; i < 128; i = i + 1) begin
                 busy[i]  <= 1'b0;
                 valid[i] <= 1'b0;
                 data[i]  <= 16'b0;
@@ -161,21 +161,21 @@ always @(posedge clk) begin
     end
 end
 
-// ARF read ports
-assign ARF_data_1  = data[ARF_tag_1];
-assign ARF_valid_1 = valid[ARF_tag_1];
-assign ARF_data_2  = data[ARF_tag_2];
-assign ARF_valid_2 = valid[ARF_tag_2];
-assign ARF_data_3  = data[ARF_tag_3];
-assign ARF_valid_3 = valid[ARF_tag_3];
-assign ARF_data_4  = data[ARF_tag_4];
-assign ARF_valid_4 = valid[ARF_tag_4];
-assign ARF_data_5  = data[ARF_tag_5];
-assign ARF_valid_5 = valid[ARF_tag_5];
-assign ARF_data_6  = data[ARF_tag_6];
-assign ARF_valid_6 = valid[ARF_tag_6];
-assign ARF_data_7  = data[ARF_tag_7];
-assign ARF_valid_7 = valid[ARF_tag_7];
+// RRF read ports
+assign RRF_data_1  = data[ARF_tag_1];
+assign RRF_valid_1 = valid[ARF_tag_1];
+assign RRF_data_2  = data[ARF_tag_2];
+assign RRF_valid_2 = valid[ARF_tag_2];
+assign RRF_data_3  = data[ARF_tag_3];
+assign RRF_valid_3 = valid[ARF_tag_3];
+assign RRF_data_4  = data[ARF_tag_4];
+assign RRF_valid_4 = valid[ARF_tag_4];
+assign RRF_data_5  = data[ARF_tag_5];
+assign RRF_valid_5 = valid[ARF_tag_5];
+assign RRF_data_6  = data[ARF_tag_6];
+assign RRF_valid_6 = valid[ARF_tag_6];
+assign RRF_data_7  = data[ARF_tag_7];
+assign RRF_valid_7 = valid[ARF_tag_7];
 
 endmodule
 
@@ -195,14 +195,14 @@ ARF:
 module ARF (
     input  wire         clk,
     input  wire         stall,
-    input  wire         flush,
+    input  wire         reset,
 
     // From Decode
     input  wire [2:0]   decode_reg_idx1,
-    input  wire [4:0]   decode_new_tag1,
+    input  wire [6:0]   decode_new_tag1,
     input  wire         decode_update_tag1,
     input  wire [2:0]   decode_reg_idx2,
-    input  wire [4:0]   decode_new_tag2,
+    input  wire [6:0]   decode_new_tag2,
     input  wire         decode_update_tag2,
 
     // From RRF
@@ -215,51 +215,64 @@ module ARF (
 
     // To Decode
     output wire [7:0]   busy_bits,       // One bit per register
-    output wire [39:0]  tags,            // Flattened: 8 registers x 5 bits each
-    output wire [127:0] data,            // Flattened: 8 registers x 16 bits each
+    output wire [15:0]  ARF_data_1,
+    output wire [15:0]  ARF_data_2,
+    output wire [15:0]  ARF_data_3,
+    output wire [15:0]  ARF_data_4,
+    output wire [15:0]  ARF_data_5,
+    output wire [15:0]  ARF_data_6,
+    output wire [15:0]  ARF_data_7,
+
+    output wire [6:0]   ARF_tag_1,
+    output wire [6:0]   ARF_tag_2,
+    output wire [6:0]   ARF_tag_3,
+    output wire [6:0]   ARF_tag_4,
+    output wire [6:0]   ARF_tag_5,
+    output wire [6:0]   ARF_tag_6,
+    output wire [6:0]   ARF_tag_7
 
     // To RRF
-    output wire [4:0]   ARF_tag_1,
-    output wire [4:0]   ARF_tag_2,
-    output wire [4:0]   ARF_tag_3,
-    output wire [4:0]   ARF_tag_4,
-    output wire [4:0]   ARF_tag_5,
-    output wire [4:0]   ARF_tag_6,
-    output wire [4:0]   ARF_tag_7
+    // output wire [6:0]   ARF_tag_1,
+    // output wire [6:0]   ARF_tag_2,
+    // output wire [6:0]   ARF_tag_3,
+    // output wire [6:0]   ARF_tag_4,
+    // output wire [6:0]   ARF_tag_5,
+    // output wire [6:0]   ARF_tag_6,
+    // output wire [6:0]   ARF_tag_7
 );
 
 // Internal registers
 reg        busy  [7:0];
-reg [15:0] data_reg [7:0];
-reg [4:0]  tag   [7:0];
+reg [15:0] data [7:0];
+reg [6:0]  tag   [7:0];
 
-// Assign flattened outputs
-genvar i;
-generate
-    for (i = 0; i < 8; i = i + 1) begin : ARF_OUTS
-        assign busy_bits[i] = busy[i];
-        assign tags[i*5 +: 5] = tag[i];
-        assign data[i*16 +: 16] = data_reg[i];
-    end
-endgenerate
 
 // ARF tag outputs (same as tags for decode)
-assign ARF_tag_1 = tag[0];
-assign ARF_tag_2 = tag[1];
-assign ARF_tag_3 = tag[2];
-assign ARF_tag_4 = tag[3];
-assign ARF_tag_5 = tag[4];
-assign ARF_tag_6 = tag[5];
-assign ARF_tag_7 = tag[6];
+assign ARF_tag_1 = tag[1];
+assign ARF_tag_2 = tag[2];
+assign ARF_tag_3 = tag[3];
+assign ARF_tag_4 = tag[4];
+assign ARF_tag_5 = tag[5];
+assign ARF_tag_6 = tag[6];
+assign ARF_tag_7 = tag[7];
+
+// ARF data outputs
+assign ARF_data_1 = data[1];
+assign ARF_data_2 = data[2];
+assign ARF_data_3 = data[3];
+assign ARF_data_4 = data[4];
+assign ARF_data_5 = data[5];
+assign ARF_data_6 = data[6];
+assign ARF_data_7 = data[7];
 
 // Main logic
 integer j;
-always @(posedge clk) begin
-    if (flush) begin
+always @(posedge clk or posedge reset) begin
+    if (reset) begin
         for (j = 0; j < 8; j = j + 1) begin
             busy[j] <= 0;
-            tag[j] <= 5'b0;
-            data_reg[j] <= 16'b0;
+            tag[j] <= 7'b0;
+            data[j] <= 16'b0;
         end
     end else if (!stall) begin
         // Update from Decode - entry 1
@@ -275,12 +288,12 @@ always @(posedge clk) begin
 
         // Update from RRF - entry 1
         if (rrf_write_en1) begin
-            data_reg[rrf_write_idx1] <= rrf_write_data1;
-            busy[rrf_write_idx1] <= 0;      // 0 only if tag
+            data[rrf_write_idx1] <= rrf_write_data1;
+            busy[rrf_write_idx1] <= 0;
         end
         // Update from RRF - entry 2
         if (rrf_write_en2) begin
-            data_reg[rrf_write_idx2] <= rrf_write_data2;
+            data[rrf_write_idx2] <= rrf_write_data2;
             busy[rrf_write_idx2] <= 0;
         end
     end

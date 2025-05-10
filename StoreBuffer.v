@@ -22,6 +22,7 @@ module StoreBuffer(
     output wire [4:0] free_index_1,
     output wire [4:0] free_index_2,
     output wire stall,
+    
     // To L1-D Cache
     output wire head_valid,
     output wire [15:0] head_addr,

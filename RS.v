@@ -183,6 +183,7 @@ assign rs_stall = (free_count < 2);
 
 // Helper function: check for free slot
 integer idx1, idx2;
+integer readyx1, readyx2;
 
 task automatic find_two_free_entries(output integer out1, output integer out2);
     integer j;
@@ -190,18 +191,28 @@ task automatic find_two_free_entries(output integer out1, output integer out2);
         out1 = -1;
         out2 = -1;
         for (j = 0; j < 32; j = j + 1) begin
-            if (!valid[j] && !(
-                    (ALU1_D_W && ALU1_D_RR == opr1[j][6:0]) ||
-                    (ALU2_D_W && ALU2_D_RR == opr1[j][6:0]) ||
-                    (LS_D_W   && LS_D_RR   == opr1[j][6:0]) ||
-                    (ALU1_D_W && ALU1_D_RR == opr2[j][6:0]) ||
-                    (ALU2_D_W && ALU2_D_RR == opr2[j][6:0]) ||
-                    (LS_D_W   && LS_D_RR   == opr2[j][6:0])
-                )) begin
+            if (!valid[j]) begin
                 if (out1 == -1) out1 = j;
                 else if (out2 == -1) begin
                     out2 = j;
                     disable find_two_free_entries; // ✅ legal inside task
+                end
+            end
+        end
+    end
+endtask
+
+task automatic find_two_ready_entries(output integer out1, output integer out2);
+    integer j;
+    begin
+        out1 = -1;
+        out2 = -1;
+        for (j = 0; j < 32; j = j + 1) begin
+            if (valid[j] && opr1_valid[j] && opr2_valid[j]) begin
+                if (out1 == -1) out1 = j;
+                else if (out2 == -1) begin
+                    out2 = j;
+                    disable find_two_ready_entries; // ✅ legal inside task
                 end
             end
         end
@@ -213,11 +224,31 @@ always @(posedge clk or posedge reset) begin
     if (reset) begin
         for (i = 0; i < 32; i = i + 1) begin
             valid[i] <= 0;
+            opcode[i] <= 0;
+            cw[i] <= 0;
+            zw[i] <= 0;
+            opr1[i] <= 0;
             opr1_valid[i] <= 0;
+            opr2[i] <= 0;
             opr2_valid[i] <= 0;
+            imm[i] <= 0;
+            neg2[i] <= 0;
+            carry_cond[i] <= 0;
+            zero_cond[i] <= 0;
+            carry_flag[i] <= 0;
             carry_valid[i] <= 0;
+            zero_flag[i] <= 0;
             zero_valid[i] <= 0;
+            rrf_dest[i] <= 0;
+            prev_dest[i] <= 0;
             prev_dest_valid[i] <= 0;
+            r_cz_carry_dest[i] <= 0;
+            r_cz_zero_dest[i] <= 0;
+            branch_pred[i] <= 0;
+            pc[i] <= 0;
+            rob_index[i] <= 0;
+            arf_dest[i] <= 0;
+
         end
         ALU1_V <= 0;
         ALU2_V <= 0;
@@ -257,51 +288,98 @@ always @(posedge clk or posedge reset) begin
 
         // Issue to ALU1/2
         issued = 0;
-        for (i = 0; i < 32 && issued < 2; i = i + 1) begin
-            if (valid[i] && opr1_valid[i] && opr2_valid[i]) begin
-                if (!ALU1_V) begin
-                    ALU1_V <= 1;
-                    ALU1_opcode <= opcode[i];
-                    ALU1_opr1 <= opr1[i];
-                    ALU1_opr2 <= opr2[i];
-                    ALU1_imm <= imm[i];
-                    ALU1_carry <= carry_valid[i];
-                    ALU1_zero <= zero_valid[i];
-                    ALU1_neg_opr2 <= neg2[i];
-                    ALU1_CZ_cond <= {carry_cond[i], zero_cond[i]};
-                    ALU1_dest <= rrf_dest[i];
-                    ALU1_arch_dest <= arf_dest[i];
-                    ALU1_prev_dest <= prev_dest[i];
-                    ALU1_PC <= pc[i];
-                    ALU1_C_dest <= r_cz_carry_dest[i];
-                    ALU1_Z_dest <= r_cz_zero_dest[i];
-                    ALU1_branch_pred <= branch_pred[i];
-                    ALU1_ROB_index <= rob_index[i];
-                    valid[i] <= 0;
-                    issued = issued + 1;
-                end else if (!ALU2_V) begin
-                    ALU2_V <= 1;
-                    ALU2_opcode <= opcode[i];
-                    ALU2_opr1 <= opr1[i];
-                    ALU2_opr2 <= opr2[i];
-                    ALU2_imm <= imm[i];
-                    ALU2_carry <= carry_valid[i];
-                    ALU2_zero <= zero_valid[i];
-                    ALU2_neg_opr2 <= neg2[i];
-                    ALU2_CZ_cond <= {carry_cond[i], zero_cond[i]};
-                    ALU2_dest <= rrf_dest[i];
-                    ALU2_arch_dest <= arf_dest[i];
-                    ALU2_prev_dest <= prev_dest[i];
-                    ALU2_PC <= pc[i];
-                    ALU2_C_dest <= r_cz_carry_dest[i];
-                    ALU2_Z_dest <= r_cz_zero_dest[i];
-                    ALU2_branch_pred <= branch_pred[i];
-                    ALU2_ROB_index <= rob_index[i];
-                    valid[i] <= 0;
-                    issued = issued + 1;
-                end
-            end
+        readyx1 = -1;
+        readyx2 = -1;
+        find_two_ready_entries(readyx1, readyx2);
+        
+        if (!ALU1_V && readyx1 != -1) begin
+            ALU1_V <= 1;
+            ALU1_opcode <= opcode[readyx1];
+            ALU1_opr1 <= opr1[readyx1];
+            ALU1_opr2 <= opr2[readyx1];
+            ALU1_imm <= imm[readyx1];
+            ALU1_carry <= carry_valid[readyx1];
+            ALU1_zero <= zero_valid[readyx1];
+            ALU1_neg_opr2 <= neg2[readyx1];
+            ALU1_CZ_cond <= {carry_cond[readyx1], zero_cond[readyx1]};
+            ALU1_dest <= rrf_dest[readyx1];
+            ALU1_arch_dest <= arf_dest[readyx1];
+            ALU1_prev_dest <= prev_dest[readyx1];
+            ALU1_PC <= pc[readyx1];
+            ALU1_C_dest <= r_cz_carry_dest[readyx1];
+            ALU1_Z_dest <= r_cz_zero_dest[readyx1];
+            ALU1_branch_pred <= branch_pred[readyx1];
+            ALU1_ROB_index <= rob_index[readyx1];
+            valid[readyx1] <= 0;
+            issued = issued + 1;
         end
+        if (!ALU2_V && readyx2 != -1) begin
+            ALU2_V <= 1;
+            ALU2_opcode <= opcode[readyx2];
+            ALU2_opr1 <= opr1[readyx2];
+            ALU2_opr2 <= opr2[readyx2];
+            ALU2_imm <= imm[readyx2];
+            ALU2_carry <= carry_valid[readyx2];
+            ALU2_zero <= zero_valid[readyx2];
+            ALU2_neg_opr2 <= neg2[readyx2];
+            ALU2_CZ_cond <= {carry_cond[readyx2], zero_cond[readyx2]};
+            ALU2_dest <= rrf_dest[readyx2];
+            ALU2_arch_dest <= arf_dest[readyx2];
+            ALU2_prev_dest <= prev_dest[readyx2];
+            ALU2_PC <= pc[readyx2];
+            ALU2_C_dest <= r_cz_carry_dest[readyx2];
+            ALU2_Z_dest <= r_cz_zero_dest[readyx2];
+            ALU2_branch_pred <= branch_pred[readyx2];
+            ALU2_ROB_index <= rob_index[readyx2];
+            valid[readyx2] <= 0;
+            issued = issued + 1;
+        end
+
+        // for (i = 0; i < 32 && issued < 2; i = i + 1) begin
+        //     if (valid[i] && opr1_valid[i] && opr2_valid[i]) begin
+        //         if (!ALU1_V) begin
+        //             ALU1_V <= 1;
+        //             ALU1_opcode <= opcode[i];
+        //             ALU1_opr1 <= opr1[i];
+        //             ALU1_opr2 <= opr2[i];
+        //             ALU1_imm <= imm[i];
+        //             ALU1_carry <= carry_valid[i];
+        //             ALU1_zero <= zero_valid[i];
+        //             ALU1_neg_opr2 <= neg2[i];
+        //             ALU1_CZ_cond <= {carry_cond[i], zero_cond[i]};
+        //             ALU1_dest <= rrf_dest[i];
+        //             ALU1_arch_dest <= arf_dest[i];
+        //             ALU1_prev_dest <= prev_dest[i];
+        //             ALU1_PC <= pc[i];
+        //             ALU1_C_dest <= r_cz_carry_dest[i];
+        //             ALU1_Z_dest <= r_cz_zero_dest[i];
+        //             ALU1_branch_pred <= branch_pred[i];
+        //             ALU1_ROB_index <= rob_index[i];
+        //             valid[i] <= 0;
+        //             issued = issued + 1;
+        //         end else if (!ALU2_V) begin
+        //             ALU2_V <= 1;
+        //             ALU2_opcode <= opcode[i];
+        //             ALU2_opr1 <= opr1[i];
+        //             ALU2_opr2 <= opr2[i];
+        //             ALU2_imm <= imm[i];
+        //             ALU2_carry <= carry_valid[i];
+        //             ALU2_zero <= zero_valid[i];
+        //             ALU2_neg_opr2 <= neg2[i];
+        //             ALU2_CZ_cond <= {carry_cond[i], zero_cond[i]};
+        //             ALU2_dest <= rrf_dest[i];
+        //             ALU2_arch_dest <= arf_dest[i];
+        //             ALU2_prev_dest <= prev_dest[i];
+        //             ALU2_PC <= pc[i];
+        //             ALU2_C_dest <= r_cz_carry_dest[i];
+        //             ALU2_Z_dest <= r_cz_zero_dest[i];
+        //             ALU2_branch_pred <= branch_pred[i];
+        //             ALU2_ROB_index <= rob_index[i];
+        //             valid[i] <= 0;
+        //             issued = issued + 1;
+        //         end
+        //     end
+        // end
 
         // Insertion
         if (!stall && free_count >= 2) begin
