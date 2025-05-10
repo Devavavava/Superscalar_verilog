@@ -749,12 +749,12 @@ load_store_unit load_store_unit_inst (
 
 // Instantiate ROB
 ROB #(
-	.ROB_ENTRY_SIZE(ROB_ENTRY_SIZE),
-	.ROB_INDEX_SIZE(ROB_SIZE),
-	.RRF_SIZE(RRF_SIZE),
-	.R_CZ_SIZE(R_CZ_SIZE),
-	.SB_SIZE(SB_SIZE),
-	.ROB_SIZE(ROB_SIZE)
+	.ROB_ENTRY_SIZE(44),
+	.ROB_INDEX_SIZE(7),
+	.RRF_SIZE(7),
+	.R_CZ_SIZE(8),
+	.SB_SIZE(5),
+	.ROB_SIZE(128)
 ) rob_inst (
 	// Main Control Signals
 	.CLK(clk),

@@ -191,14 +191,7 @@ task automatic find_two_free_entries(output integer out1, output integer out2);
         out1 = -1;
         out2 = -1;
         for (j = 0; j < 32; j = j + 1) begin
-            if (!valid[j] && !(
-                    (ALU1_D_W && ALU1_D_RR == opr1[j][6:0]) ||
-                    (ALU2_D_W && ALU2_D_RR == opr1[j][6:0]) ||
-                    (LS_D_W   && LS_D_RR   == opr1[j][6:0]) ||
-                    (ALU1_D_W && ALU1_D_RR == opr2[j][6:0]) ||
-                    (ALU2_D_W && ALU2_D_RR == opr2[j][6:0]) ||
-                    (LS_D_W   && LS_D_RR   == opr2[j][6:0])
-                )) begin
+            if (!valid[j]) begin
                 if (out1 == -1) out1 = j;
                 else if (out2 == -1) begin
                     out2 = j;
