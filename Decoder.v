@@ -112,7 +112,37 @@ module Decoder #(
     output reg  [R_CZ_SIZE-1:0]     new_Z_tag,
 
     output reg                      SB_reserve_1,
-    output reg                      SB_reserve_2
+    output reg                      SB_reserve_2,
+
+
+
+
+    input wire ALU1_D_W,
+    input wire [15:0] ALU1_D,
+    input wire [6:0] ALU1_D_RR,
+    input wire ALU1_C_W,
+    input wire ALU1_C,
+    input wire [7:0] ALU1_C_RR,
+    input wire ALU1_Z_W,
+    input wire ALU1_Z,
+    input wire [7:0] ALU1_Z_RR,
+
+    input wire ALU2_D_W,
+    input wire [15:0] ALU2_D,
+    input wire [6:0] ALU2_D_RR,
+    input wire ALU2_C_W,
+    input wire ALU2_C,
+    input wire [7:0] ALU2_C_RR,
+    input wire ALU2_Z_W,
+    input wire ALU2_Z,
+    input wire [7:0] ALU2_Z_RR
+
+    input wire LS_D_W,
+    input wire [15:0] LS_D,
+    input wire [6:0] LS_D_RR,
+    input wire LS_Z_W,
+    input wire LS_Z,
+    input wire [7:0] LS_Z_RR
 );
 
 reg [2:0] I1_arch_dest, I2_arch_dest;

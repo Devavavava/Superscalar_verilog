@@ -126,13 +126,26 @@ assign ROB_index_2 = ROB_Head_Pointer + 6'd1;
 
 always @(*) begin
     ROB_Retire1_V = 1'b0;
-    ROB_Retire2_V = 1'b0;
+    ROB_Retire1_ARF_Addr = 3'b0;
+    ROB_Retire1_RRF_Addr = {RRF_SIZE{1'b0}};
     ROB_Retire1_C_V = 1'b0;
-    ROB_Retire2_C_V = 1'b0;
+    ROB_Retire1_C_Addr = {R_CZ_SIZE{1'b0}};
     ROB_Retire1_Z_V = 1'b0;
-    ROB_Retire2_Z_V = 1'b0;
+    ROB_Retire1_Z_Addr = {R_CZ_SIZE{1'b0}};
     ROB_Retire1_SB_V = 1'b0;
+    ROB_Retire1_SB_Addr = {SB_SIZE{1'b0}};
+    ROB_Retire1_HeadPC = 16'b0;
+
+    ROB_Retire2_V = 1'b0;
+    ROB_Retire2_ARF_Addr = 3'b0;
+    ROB_Retire2_RRF_Addr = {RRF_SIZE{1'b0}};
+    ROB_Retire2_C_V = 1'b0;
+    ROB_Retire2_C_Addr = {R_CZ_SIZE{1'b0}};
+    ROB_Retire2_Z_V = 1'b0;
+    ROB_Retire2_Z_Addr = {R_CZ_SIZE{1'b0}};
     ROB_Retire2_SB_V = 1'b0;
+    ROB_Retire2_SB_Addr = {SB_SIZE{1'b0}};
+    ROB_Retire2_HeadPC = 16'b0;
 
     // Retiring instructions
     if(Instr_Valid[ROB_Retire_Pointer]) begin
@@ -178,6 +191,7 @@ always @(posedge CLK or posedge RST) begin
             SB_Addr[i] <= 5'b0;
         end
         ROB_Head_Pointer <= 7'b0;
+        ROB_Retire_Pointer <= 7'b0;
     end
     else
     begin

@@ -248,22 +248,22 @@ reg [6:0]  tag   [7:0];
 
 
 // ARF tag outputs (same as tags for decode)
-assign ARF_tag_1 = tag[0];
-assign ARF_tag_2 = tag[1];
-assign ARF_tag_3 = tag[2];
-assign ARF_tag_4 = tag[3];
-assign ARF_tag_5 = tag[4];
-assign ARF_tag_6 = tag[5];
-assign ARF_tag_7 = tag[6];
+assign ARF_tag_1 = tag[1];
+assign ARF_tag_2 = tag[2];
+assign ARF_tag_3 = tag[3];
+assign ARF_tag_4 = tag[4];
+assign ARF_tag_5 = tag[5];
+assign ARF_tag_6 = tag[6];
+assign ARF_tag_7 = tag[7];
 
 // ARF data outputs
-assign ARF_data_1 = data[0];
-assign ARF_data_2 = data[1];
-assign ARF_data_3 = data[2];
-assign ARF_data_4 = data[3];
-assign ARF_data_5 = data[4];
-assign ARF_data_6 = data[5];
-assign ARF_data_7 = data[6];
+assign ARF_data_1 = data[1];
+assign ARF_data_2 = data[2];
+assign ARF_data_3 = data[3];
+assign ARF_data_4 = data[4];
+assign ARF_data_5 = data[5];
+assign ARF_data_6 = data[6];
+assign ARF_data_7 = data[7];
 
 // Main logic
 integer j;

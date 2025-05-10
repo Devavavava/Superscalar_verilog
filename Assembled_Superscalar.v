@@ -185,11 +185,12 @@ wire RRF_two_available;
 // ALU outputs
 wire ALU1_branch_mispred, ALU2_branch_mispred, ALU1_ROB_W, ALU2_ROB_W;
 wire [15:0] ALU1_new_PC, ALU2_new_PC;
+wire [6:0] ALU_to_ROB_index1, ALU_to_ROB_index2; // to ROB
 
 // LS outputs
 wire LS_branch_mispred, LS_ROB_W;
 wire [15:0] LS_new_PC;
-
+wire [6:0] LS_to_ROB_index; 
 // ----------------------------------------------------------------------------
 
 // ROB outputs
@@ -653,7 +654,7 @@ alu alu1_inst (
 	.ALU_branch_mispred(ALU1_branch_mispred),
 	.ALU_new_PC(ALU1_new_PC),
 	.ROB_update(ALU1_ROB_W),
-	.ROB_index_out(ALU1_ROB_index)
+	.ROB_index_out(ALU_to_ROB_index1)
 );
 
 // Instantiate ALU2
@@ -695,7 +696,7 @@ alu alu2_inst (
 	.ALU_branch_mispred(ALU2_branch_mispred),
 	.ALU_new_PC(ALU2_new_PC),
 	.ROB_update(ALU2_ROB_W),
-	.ROB_index_out(ALU2_ROB_index)
+	.ROB_index_out(ALU_to_ROB_index2)
 );
 
 // Instantiate LoadStore Unit
@@ -738,7 +739,7 @@ load_store_unit load_store_unit_inst (
 
 	// For ROB
 	.ROB_W(LS_ROB_W),
-	.ROB_index_out(LS_ROB_index),
+	.ROB_index_out(LS_to_ROB_index),
 	.LS_branch_mispred(LS_branch_mispred),
 	.LS_new_PC(LS_new_PC),
 
@@ -771,19 +772,19 @@ ROB #(
 	.ALU1_mispred(ALU1_branch_mispred),
 	.ALU1_new_PC(ALU1_new_PC),
 	.ALU1_valid(ALU1_ROB_W),
-	.ALU1_index(ALU1_ROB_index),
+	.ALU1_index(ALU_to_ROB_index1),
 
 	// From ALU2
 	.ALU2_mispred(ALU2_branch_mispred),
 	.ALU2_new_PC(ALU2_new_PC),
 	.ALU2_valid(ALU2_D_W),
-	.ALU2_index(ALU2_ROB_index),
+	.ALU2_index(ALU_to_ROB_index2),
 
 	// From Load/Store Unit
 	.LSU_mispred(LS_branch_mispred),
 	.LSU_new_PC(LS_new_PC),
 	.LSU_valid(LS_D_W),
-	.LSU_index(LS_ROB_index),
+	.LSU_index(LS_to_ROB_index),
 
 	// From Store Buffer
 	.SB_Addr1(0), // Placeholder, connect as needed
