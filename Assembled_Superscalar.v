@@ -38,12 +38,12 @@ wire [15:0] ARF_D1, ARF_D2, ARF_D3, ARF_D4, ARF_D5, ARF_D6, ARF_D7; // from ARF
 wire [RRF_SIZE-1:0] ARF_tag_1, ARF_tag_2, ARF_tag_3, ARF_tag_4, ARF_tag_5, ARF_tag_6, ARF_tag_7; // from ARF
 wire [7:0] RRF_V_ARF_tags; // from RRF
 wire [15:0] RRF_D_ARF_tag_1, RRF_D_ARF_tag_2, RRF_D_ARF_tag_3, RRF_D_ARF_tag_4, RRF_D_ARF_tag_5, RRF_D_ARF_tag_6, RRF_D_ARF_tag_7; // from RRF
-wire arch_C, arch_C_B; // from RRF
-wire [R_CZ_SIZE-1:0] arch_C_tag; // from RRF
-wire arch_Z, arch_Z_B; // from RRF
-wire [R_CZ_SIZE-1:0] arch_Z_tag; // from RRF
-wire R_CZ_V_arch_C_tag, R_CZ_D_arch_C_tag; // from RRF
-wire R_CZ_V_arch_Z_tag, R_CZ_D_arch_Z_tag; // from RRF
+wire arch_C, arch_C_B; // from RRF_CZ
+wire [R_CZ_SIZE-1:0] arch_C_tag; // from RRF_CZ
+wire arch_Z, arch_Z_B; // from RRF_CZ
+wire [R_CZ_SIZE-1:0] arch_Z_tag; // from RRF_CZ
+wire R_CZ_V_arch_C_tag, R_CZ_D_arch_C_tag; // from RRF_CZ
+wire R_CZ_V_arch_Z_tag, R_CZ_D_arch_Z_tag; // from RRF_CZ
 
 wire [15:0] PR_I1, PR_I2; // from IF_ID_PR
 wire PR_I1V, PR_I2V; // from IF_ID_PR
@@ -141,6 +141,8 @@ wire [ROB_SIZE-1:0] ALU2_ROB_index;
 // General outputs
 wire [4:0] rs_al_empty_pos1, rs_al_empty_pos2; 
 
+// ----------------------------------------------------------------------------
+
 // RS LS outputs
 wire rs_ls_stall;                // Fetch/decode stall signal
 
@@ -160,6 +162,38 @@ wire LS_is_LMSM;
 // General outputs
 wire [4:0] rs_ls_empty_pos1;
 
+// ----------------------------------------------------------------------------
+
+// RRF inputs
+wire ROB_RRF_W1, ROB_RRF_W2; 
+wire [RRF_SIZE-1:0] ROB_RRF_readidx1, ROB_RRF_readidx2;
+wire [2:0] ROB_RRF_writeidx1, ROB_RRF_writeidx2;
+
+// RRF outputs
+wire [2:0] RRF_ARF_write_idx1, RRF_ARF_write_idx2;
+wire [15:0] RRF_ARF_write_data1, RRF_ARF_write_data2;
+wire RRF_ARF_write_en1, RRF_ARF_write_en2; 
+wire RRF_two_available;
+// ----------------------------------------------------------------------------
+
+// ARF inputs
+
+// ARF outputs
+
+// ----------------------------------------------------------------------------
+
+// ALU outputs
+wire ALU1_branch_mispred, ALU2_branch_mispred, ALU1_ROB_W, ALU2_ROB_W;
+wire [15:0] ALU1_new_PC, ALU2_new_PC;
+
+// LS outputs
+wire LS_branch_mispred, LS_ROB_W;
+wire [15:0] LS_new_PC;
+
+// ----------------------------------------------------------------------------
+
+// ROB outputs
+wire ROB_stall;
 // Instantiate FetchStage
 FetchStage fetch_stage_inst (
     .clk(clk),					// external clock
@@ -360,17 +394,17 @@ RS_ArithmeticLogical #(
     .RS_AL_2(RS_AL_2),
 
     // From ALU1
-    .ALU1_D_W(0),	// ALU1_D_W
+    .ALU1_D_W(ALU1_D_W),
     .ALU1_D(ALU1_D),
     .ALU1_D_RR(ALU1_D_RR),
 
     // From ALU2
-    .ALU2_D_W(0),	// ALU2_D_W
+    .ALU2_D_W(ALU2_D_W),
     .ALU2_D(ALU2_D),
     .ALU2_D_RR(ALU2_D_RR),
 
     // From LS
-    .LS_D_W(0),	// LS_D_W
+    .LS_D_W(LS_D_W),
     .LS_D(LS_D),
     .LS_D_RR(LS_D_RR),
 
@@ -420,6 +454,7 @@ RS_ArithmeticLogical #(
 	.empty_pos2(rs_al_empty_pos2)
 );
 
+// Instantiate RS_LoadStore
 RS_LoadStore #(
     .RS_LS_ENTRY_SIZE(RS_LS_ENTRY_SIZE)
 ) rs_load_store_inst (
@@ -435,17 +470,17 @@ RS_LoadStore #(
     .RS_LS_2(RS_LS_2),
 
     // From ALU1
-    .ALU1_D_W(0),	// ALU1_D_W
+    .ALU1_D_W(ALU1_D_W),
     .ALU1_D(ALU1_D),
     .ALU1_D_RR(ALU1_D_RR),
 
     // From ALU2
-    .ALU2_D_W(0),	// ALU2_D_W
+    .ALU2_D_W(ALU2_D_W),
     .ALU2_D(ALU2_D),
     .ALU2_D_RR(ALU2_D_RR),
 
     // From LS
-    .LS_D_W(0),	// LS_D_W
+    .LS_D_W(LS_D_W),
     .LS_D(LS_D),
     .LS_D_RR(LS_D_RR),
 
@@ -469,5 +504,323 @@ RS_LoadStore #(
 	.empty_pos1(rs_ls_empty_pos1)
 );
 
+// Instantiate RF
+// Instantiate RRF
+RRF rrf_inst (
+	.clk(clk),
+	.stall(stall),
+	.flush(flush),
+
+	// From Decoder
+	.decode_use_slot1(using_RRF_ptr_1),
+	.decode_use_slot2(using_RRF_ptr_2),
+
+	// From Execute
+	.write1_en(ALU1_D_W),
+	.write2_en(ALU2_D_W),
+	.write3_en(LS_D_W),
+	.write1_idx(ALU1_D_RR),
+	.write2_idx(ALU2_D_RR),
+	.write3_idx(LS_D_RR),
+	.write1_data(ALU1_D),
+	.write2_data(ALU2_D),
+	.write3_data(LS_D),
+
+	// From ARF
+	.ARF_tag_1(ARF_tag_1),
+	.ARF_tag_2(ARF_tag_2),
+	.ARF_tag_3(ARF_tag_3),
+	.ARF_tag_4(ARF_tag_4),
+	.ARF_tag_5(ARF_tag_5),
+	.ARF_tag_6(ARF_tag_6),
+	.ARF_tag_7(ARF_tag_7),
+
+	// From ROB
+	.rob_write_valid1(ROB_RRF_W1),
+	.rob_write_index1(ROB_RRF_writeidx1),
+	.rob_rrf_read_idx1(ROB_RRF_readidx1),
+	.rob_write_valid2(ROB_RRF_W2),
+	.rob_write_index2(ROB_RRF_writeidx2),
+	.rob_rrf_read_idx2(ROB_RRF_readidx2),
+
+	// To Decode
+	.two_empty_available(RRF_two_available),		// THESE STALL SOMEWHERE
+	.empty_pos1_idx(RRF_ptr_1),
+	.empty_pos2_idx(RRF_ptr_2),
+	.RRF_data_1(RRF_D_ARF_tag_1),
+	.RRF_valid_1(RRF_V_ARF_tags[1]),
+	.RRF_data_2(RRF_D_ARF_tag_2),
+	.RRF_valid_2(RRF_V_ARF_tags[2]),
+	.RRF_data_3(RRF_D_ARF_tag_3),
+	.RRF_valid_3(RRF_V_ARF_tags[3]),
+	.RRF_data_4(RRF_D_ARF_tag_4),
+	.RRF_valid_4(RRF_V_ARF_tags[4]),
+	.RRF_data_5(RRF_D_ARF_tag_5),
+	.RRF_valid_5(RRF_V_ARF_tags[5]),
+	.RRF_data_6(RRF_D_ARF_tag_6),
+	.RRF_valid_6(RRF_V_ARF_tags[6]),
+	.RRF_data_7(RRF_D_ARF_tag_7),
+	.RRF_valid_7(RRF_V_ARF_tags[7]),
+
+	// To ARF
+	.ARF_write_valid1(RRF_ARF_write_en1),
+	.ARF_write_index1(RRF_ARF_write_idx1),
+	.ARF_write_data1(RRF_ARF_write_data1),
+	.ARF_write_valid2(RRF_ARF_write_en2),
+	.ARF_write_index2(RRF_ARF_write_idx2),
+	.ARF_write_data2(RRF_ARF_write_data2)
+);
+
+// Instantiate ARF
+ARF arf_inst (
+	.clk(clk),
+	.reset(reset),
+	.stall(stall),
+
+	// From Decoder
+	.decode_reg_idx1(ARF_new_reg_1),
+	.decode_reg_idx2(ARF_new_reg_2),
+	.decode_new_tag1(ARF_new_tag_1),
+	.decode_new_tag2(ARF_new_tag_2),
+	.decode_update_tag1(ARF_update_tag_1),
+	.decode_update_tag2(ARF_update_tag_2),
+
+	// From RRF
+	.rrf_write_idx1(RRF_ARF_write_idx1),
+	.rrf_write_idx2(RRF_ARF_write_idx2),
+	.rrf_write_data1(RRF_ARF_write_data1),
+	.rrf_write_data2(RRF_ARF_write_data2),
+	.rrf_write_en1(RRF_ARF_write_en1),
+	.rrf_write_en2(RRF_ARF_write_en2),
+
+	// To Decode
+	.busy_bits(ARF_B),
+	.ARF_data_1(ARF_D1),
+	.ARF_data_2(ARF_D2),
+	.ARF_data_3(ARF_D3),
+	.ARF_data_4(ARF_D4),
+	.ARF_data_5(ARF_D5),
+	.ARF_data_6(ARF_D6),
+	.ARF_data_7(ARF_D7),
+
+	// To Decode and RRF
+	.ARF_tag_1(ARF_tag_1),
+	.ARF_tag_2(ARF_tag_2),
+	.ARF_tag_3(ARF_tag_3),
+	.ARF_tag_4(ARF_tag_4),
+	.ARF_tag_5(ARF_tag_5),
+	.ARF_tag_6(ARF_tag_6),
+	.ARF_tag_7(ARF_tag_7)
+);
+
+// Instantiate ExecuteStage
+// Instantiate ALU1
+alu alu1_inst (
+	// Inputs
+	.valid(ALU1_V),
+	.opcode(ALU1_opcode),
+	.opr1(ALU1_opr1),
+	.opr2(ALU1_opr2),
+	.imm(ALU1_imm),
+	.carry(ALU1_carry),
+	.zero(ALU1_zero),
+	.neg_opr2(ALU1_neg_opr2),
+	.CZ_cond(ALU1_CZ_cond),
+	.dest(ALU1_dest),
+	.arch_dest(ALU1_arch_dest),
+	.prev_dest(ALU1_prev_dest),
+	.PC(ALU1_PC),
+	.C_dest(ALU1_C_dest),
+	.Z_dest(ALU1_Z_dest),
+	.branch_pred(ALU1_branch_pred),
+	.ROB_index_in(ALU1_ROB_index),
+
+	// Outputs
+	// For RRF
+	.ALU_W(ALU1_D_W),
+	.ALU_D(ALU1_D),
+	.ALU_RR(ALU1_D_RR),
+
+	// For R_CZ
+	.ALU_C_W(),
+	.ALU_C(),
+	.ALU_C_RR(),
+	.ALU_Z_W(),
+	.ALU_Z(),
+	.ALU_Z_RR(),
+
+	// For ROB
+	.ALU_branch_mispred(ALU1_branch_mispred),
+	.ALU_new_PC(ALU1_new_PC),
+	.ROB_update(ALU1_ROB_W),
+	.ROB_index_out(ALU1_ROB_index)
+);
+
+// Instantiate ALU2
+alu alu2_inst (
+	// Inputs
+	.valid(ALU2_V),
+	.opcode(ALU2_opcode),
+	.opr1(ALU2_opr1),
+	.opr2(ALU2_opr2),
+	.imm(ALU2_imm),
+	.carry(ALU2_carry),
+	.zero(ALU2_zero),
+	.neg_opr2(ALU2_neg_opr2),
+	.CZ_cond(ALU2_CZ_cond),
+	.dest(ALU2_dest),
+	.arch_dest(ALU2_arch_dest),
+	.prev_dest(ALU2_prev_dest),
+	.PC(ALU2_PC),
+	.C_dest(ALU2_C_dest),
+	.Z_dest(ALU2_Z_dest),
+	.branch_pred(ALU2_branch_pred),
+	.ROB_index_in(ALU2_ROB_index),
+
+	// Outputs
+	// For RRF
+	.ALU_W(ALU2_D_W),
+	.ALU_D(ALU2_D),
+	.ALU_RR(ALU2_D_RR),
+
+	// For R_CZ
+	.ALU_C_W(),
+	.ALU_C(),
+	.ALU_C_RR(),
+	.ALU_Z_W(),
+	.ALU_Z(),
+	.ALU_Z_RR(),
+
+	// For ROB
+	.ALU_branch_mispred(ALU2_branch_mispred),
+	.ALU_new_PC(ALU2_new_PC),
+	.ROB_update(ALU2_ROB_W),
+	.ROB_index_out(ALU2_ROB_index)
+);
+
+// Instantiate LoadStore Unit
+load_store_unit load_store_unit_inst (
+	// Inputs
+	.Valid(LS_LS_V1),
+	.Load_Store(LS_load_store),
+	.Base(LS_Base),
+	.Offset(LS_Offset),
+	.Source_Data(LS_Source_Data),
+	.dest(LS_dest),
+	.arch_dest(LS_arch_dest_ls),
+	.Z_dest(LS_Z_dest),
+	.SB_index(LS_SB_index),
+	.ROB_index(LS_ROB_index),
+	.is_LMSM(LS_is_LMSM),
+
+	.SB_match(),
+	.SB_data(),
+
+	.L1d_data(),
+
+	// Outputs
+	// For RRF
+	.LS_W(LS_D_W),
+	.LS_RR(LS_D_RR),
+	.LS_D(LS_D),
+
+	// For R_CZ
+	.LS_Z_W(),
+	.LS_Z_dest(),
+	.LS_Z(),
+
+	// For Store Buffer
+	.SB_search_addr(),
+	.SB_W(),
+	.SB_index_out(),
+	.SB_addr_out(),
+	.SB_data_out(),
+
+	// For ROB
+	.ROB_W(LS_ROB_W),
+	.ROB_index_out(LS_ROB_index),
+	.LS_branch_mispred(LS_branch_mispred),
+	.LS_new_PC(LS_new_PC),
+
+	// For L1d cache
+	.L1d_R(),
+	.L1d_addr()
+);
+
+// Instantiate ROB
+ROB #(
+	.ROB_ENTRY_SIZE(ROB_ENTRY_SIZE),
+	.ROB_INDEX_SIZE(ROB_SIZE),
+	.RRF_SIZE(RRF_SIZE),
+	.R_CZ_SIZE(R_CZ_SIZE),
+	.SB_SIZE(SB_SIZE),
+	.ROB_SIZE(ROB_SIZE)
+) rob_inst (
+	// Main Control Signals
+	.CLK(clk),
+	.Flush(flush),
+	.RST(reset),
+
+	// From Decoder
+	.Dispatch1_V(ROB_V1),
+	.Dispatch1(ROB_1),
+	.Dispatch2_V(ROB_V2),
+	.Dispatch2(ROB_2),
+
+	// From ALU1
+	.ALU1_mispred(ALU1_branch_mispred),
+	.ALU1_new_PC(ALU1_new_PC),
+	.ALU1_valid(ALU1_ROB_W),
+	.ALU1_index(ALU1_ROB_index),
+
+	// From ALU2
+	.ALU2_mispred(ALU2_branch_mispred),
+	.ALU2_new_PC(ALU2_new_PC),
+	.ALU2_valid(ALU2_D_W),
+	.ALU2_index(ALU2_ROB_index),
+
+	// From Load/Store Unit
+	.LSU_mispred(LS_branch_mispred),
+	.LSU_new_PC(LS_new_PC),
+	.LSU_valid(LS_D_W),
+	.LSU_index(LS_ROB_index),
+
+	// From Store Buffer
+	.SB_Addr1(0), // Placeholder, connect as needed
+	.SB_Addr2(0), // Placeholder, connect as needed
+
+	// To RRF
+	.ROB_Retire1_V(ROB_RRF_W1),
+	.ROB_Retire1_ARF_Addr(ROB_RRF_writeidx1),
+	.ROB_Retire1_RRF_Addr(ROB_RRF_readidx1),
+	.ROB_Retire2_V(ROB_RRF_W2),
+	.ROB_Retire2_ARF_Addr(ROB_RRF_writeidx2),
+	.ROB_Retire2_RRF_Addr(ROB_RRF_readidx2),
+
+	// To R_CZ
+	.ROB_Retire1_C_V(),
+	.ROB_Retire1_Z_V(),
+	.ROB_Retire1_C_Addr(),
+	.ROB_Retire1_Z_Addr(),
+	.ROB_Retire2_C_V(),
+	.ROB_Retire2_Z_V(),
+	.ROB_Retire2_C_Addr(),
+	.ROB_Retire2_Z_Addr(),
+
+	// To Store Buffer
+	.ROB_Retire1_SB_V(),
+	.ROB_Retire1_SB_Addr(),
+	.ROB_Retire1_HeadPC(),
+	.ROB_Retire2_SB_V(),
+	.ROB_Retire2_SB_Addr(),
+	.ROB_Retire2_HeadPC(),
+
+	// To Decoder
+	.ROB_index_1(ROB_idx_1),
+	.ROB_index_2(ROB_idx_2),
+
+	// Stall output in case of ROB full
+	.ROB_stall(ROB_stall)
+);
 
 endmodule
