@@ -11,7 +11,7 @@ module Decoder #(
     parameter R_CZ_SIZE         = 8,
     parameter RS_AL_ENTRY_SIZE  = 145,
     parameter RS_LS_ENTRY_SIZE  = 75,
-    parameter ROB_ENTRY_SIZE    = 44
+    parameter ROB_ENTRY_SIZE    = 51
 )(
     input  wire                     stall,
     input  wire [SB_SIZE-1:0]       SB_idx_1,
@@ -135,7 +135,7 @@ module Decoder #(
     input wire [7:0] ALU2_C_RR,
     input wire ALU2_Z_W,
     input wire ALU2_Z,
-    input wire [7:0] ALU2_Z_RR,
+    input wire [7:0] ALU2_Z_RR
 
     input wire LS_D_W,
     input wire [15:0] LS_D,
@@ -869,7 +869,7 @@ always @(*) begin
                 RS_AL_1[RS_AL_ENTRY_SIZE-143:RS_AL_ENTRY_SIZE-145] = I1_arch_dest; // Set destination register
 
                 ROB_V1 = 1'b1; // Set ROB valid
-                ROB_1 = {I1_arch_dest, I1_dest_tag_1, current_PR_I1PC, I1_C_W, I1_C_tag, I1_Z_W, I1_Z_tag};
+                ROB_1 = {I1_arch_dest, I1_dest_tag_1, current_PR_I1PC, I1_C_W, I1_C_tag, I1_Z_W, I1_Z_tag, 5'b0, I1_W, 1'b0};
             end else begin // If instruction is L/S instruction [LW/SW ONLY]
                 RS_LS_V1 = 1'b1; // Set RS_LS valid
                 RS_LS_1[RS_LS_ENTRY_SIZE-1] = 1'b1; // Set RS_LS valid
@@ -1196,7 +1196,7 @@ always @(*) begin
                 RS_LS_1[RS_LS_ENTRY_SIZE-75] = is_LMSM_I1_out; // Set LMSM flag [for ZERO Flag]
 
                 ROB_V1 = 1'b1; // Set ROB valid
-                ROB_1 = {I1_arch_dest, I1_dest_tag_1, current_PR_I1PC, 18'b0}; // 3+7+16+1+8+1+8 = 44 bits
+                ROB_1 = {I1_arch_dest, I1_dest_tag_1, current_PR_I1PC, 18'b0, SB_idx_1, I1_W, is_LMSM_I1_out}; // Set ROB entry
             end
         end
 
@@ -1749,12 +1749,12 @@ always @(*) begin
                     RS_AL_2[RS_AL_ENTRY_SIZE-136:RS_AL_ENTRY_SIZE-142] = ROB_idx_1; // Set ROB index
                     RS_AL_2[RS_AL_ENTRY_SIZE-143:RS_AL_ENTRY_SIZE-145] = I2_arch_dest; // Set destination register
                     ROB_V1 = 1'b1; // Set ROB valid
-                    ROB_1 = {I2_arch_dest, I2_dest_tag_1, current_PR_I2PC, I2_C_W, I2_C_tag, I2_Z_W, I2_Z_tag};
+                    ROB_1 = {I2_arch_dest, I2_dest_tag_1, current_PR_I2PC, I2_C_W, I2_C_tag, I2_Z_W, I2_Z_tag, 5'b0, I2_W, 1'b0};
                 end else begin
                     RS_AL_2[RS_AL_ENTRY_SIZE-136:RS_AL_ENTRY_SIZE-142] = ROB_idx_2; // Set ROB index
                     RS_AL_2[RS_AL_ENTRY_SIZE-143:RS_AL_ENTRY_SIZE-145] = I2_arch_dest; // Set destination register
                     ROB_V2 = 1'b1; // Set ROB valid
-                    ROB_2 = {I2_arch_dest, I2_dest_tag_1, current_PR_I2PC, I2_C_W, I2_C_tag, I2_Z_W, I2_Z_tag};
+                    ROB_2 = {I2_arch_dest, I2_dest_tag_1, current_PR_I2PC, I2_C_W, I2_C_tag, I2_Z_W, I2_Z_tag, 5'b0, I2_W, 1'b0};
                 end
                 
             end else begin // If instruction is L/S instruction [LW/SW ONLY]
@@ -2092,13 +2092,21 @@ always @(*) begin
                     RS_LS_2[RS_LS_ENTRY_SIZE-72:RS_LS_ENTRY_SIZE-74] = I2_arch_dest; // Set destination register
                     RS_LS_2[RS_LS_ENTRY_SIZE-75] = is_LMSM_I1_out | is_LMSM_I2_out; // Set LMSM flag [for ZERO Flag]
                     ROB_V1 = 1'b1; // Set ROB valid
-                    ROB_1 = {I2_arch_dest, I2_dest_tag_1, current_PR_I2PC, 18'b0}; // 3+7+16+1+8+1+8 = 44 bits
+                    if (SB_reserve_2 == 1'b1) begin
+                        ROB_1 = {I2_arch_dest, I2_dest_tag_1, current_PR_I2PC, 18'b0, SB_idx_2, I2_W, is_LMSM_I2_out | is_LMSM_I1_out};
+                    end else begin
+                        ROB_1 = {I2_arch_dest, I2_dest_tag_1, current_PR_I2PC, 18'b0, SB_idx_1, I2_W, is_LMSM_I2_out | is_LMSM_I1_out};
+                    end
                 end else begin
                     RS_LS_2[RS_LS_ENTRY_SIZE-65:RS_LS_ENTRY_SIZE-71] = ROB_idx_2; // Set ROB index
                     RS_LS_2[RS_LS_ENTRY_SIZE-72:RS_LS_ENTRY_SIZE-74] = I2_arch_dest; // Set destination register
                     RS_LS_2[RS_LS_ENTRY_SIZE-75] = is_LMSM_I1_out | is_LMSM_I2_out; // Set LMSM flag [for ZERO Flag]
                     ROB_V2 = 1'b1; // Set ROB valid
-                    ROB_2 = {I2_arch_dest, I2_dest_tag_1, current_PR_I2PC, 18'b0}; // 3+7+16+1+8+1+8 = 44 bits
+                    if (SB_reserve_2 == 1'b1) begin
+                        ROB_2 = {I2_arch_dest, I2_dest_tag_1, current_PR_I2PC, 18'b0, SB_idx_2, I2_W, is_LMSM_I2_out | is_LMSM_I1_out};
+                    end else begin
+                        ROB_2 = {I2_arch_dest, I2_dest_tag_1, current_PR_I2PC, 18'b0, SB_idx_1, I2_W, is_LMSM_I2_out | is_LMSM_I1_out};
+                    end
                 end
             end
         end
