@@ -9,12 +9,12 @@ module StoreBuffer(
     input wire LS_W,
     input wire [4:0] LS_index,
     input wire [15:0] LS_addr,
-    // Load/Store Stage for load enquiry
     input wire [15:0] LS_data,
+    // Load/Store Stage for load enquiry
     input wire [15:0] LS_search_addr,
     // Writeback Stage
     input wire pop_head,
-    // Retiring Stage
+    // Retiring Stage from ROB
     input wire [7:0] ROB_W,
     input wire [39:0] SB_index,
     

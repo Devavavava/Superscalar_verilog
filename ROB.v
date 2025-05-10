@@ -152,27 +152,64 @@ always @(*) begin
 
     // Retiring instructions
     if(Instr_Valid[ROB_Retire_Pointer]) begin
-        ROB_Retire1_V = 1'b1;
-        ROB_Retire1_ARF_Addr = ARF_Addr[ROB_Retire_Pointer];
-        ROB_Retire1_RRF_Addr = RRF_Addr[ROB_Retire_Pointer];
-        ROB_Retire1_C_V = C_W[ROB_Retire_Pointer];
-        ROB_Retire1_C_Addr = C_Addr[ROB_Retire_Pointer];
-        ROB_Retire1_Z_V = Z_W[ROB_Retire_Pointer];
-        ROB_Retire1_Z_Addr = Z_Addr[ROB_Retire_Pointer];
-        ROB_Retire1_SB_V = 1'b1;
-        ROB_Retire1_SB_Addr = SB_Addr[ROB_Retire_Pointer];
-        ROB_Retire1_HeadPC = PC[ROB_Head_Pointer + 6'd1];
-        if(Instr_Valid[ROB_Retire_Pointer + 6'd1]) begin
-            ROB_Retire2_V = 1'b1;
-            ROB_Retire2_ARF_Addr = ARF_Addr[ROB_Retire_Pointer + 6'd1];
-            ROB_Retire2_RRF_Addr = RRF_Addr[ROB_Retire_Pointer + 6'd1];
-            ROB_Retire2_C_V = C_W[ROB_Retire_Pointer + 6'd1];
-            ROB_Retire2_C_Addr = C_Addr[ROB_Retire_Pointer + 6'd1];
-            ROB_Retire2_Z_V = Z_W[ROB_Retire_Pointer + 6'd1];
-            ROB_Retire2_Z_Addr = Z_Addr[ROB_Retire_Pointer + 6'd1];
-            ROB_Retire2_SB_V = 1'b1;
-            ROB_Retire2_SB_Addr = SB_Addr[ROB_Retire_Pointer + 6'd1];
-            ROB_Retire2_HeadPC = PC[ROB_Head_Pointer + 6'd1];
+        if (~Is_LM_SM[ROB_Retire_Pointer]) begin
+            ROB_Retire1_V = 1'b1;
+            ROB_Retire1_ARF_Addr = ARF_Addr[ROB_Retire_Pointer];
+            ROB_Retire1_RRF_Addr = RRF_Addr[ROB_Retire_Pointer];
+            ROB_Retire1_C_V = C_W[ROB_Retire_Pointer];
+            ROB_Retire1_C_Addr = C_Addr[ROB_Retire_Pointer];
+            ROB_Retire1_Z_V = Z_W[ROB_Retire_Pointer];
+            ROB_Retire1_Z_Addr = Z_Addr[ROB_Retire_Pointer];
+            ROB_Retire1_SB_V = 1'b1;
+            ROB_Retire1_SB_Addr = SB_Addr[ROB_Retire_Pointer];
+            ROB_Retire1_HeadPC = PC[ROB_Head_Pointer + 6'd1];
+            if(Instr_Valid[ROB_Retire_Pointer + 6'd1]) begin
+                if (~Is_LM_SM[ROB_Retire_Pointer + 6'd1]) begin
+                    ROB_Retire2_V = 1'b1;
+                    ROB_Retire2_ARF_Addr = ARF_Addr[ROB_Retire_Pointer + 6'd1];
+                    ROB_Retire2_RRF_Addr = RRF_Addr[ROB_Retire_Pointer + 6'd1];
+                    ROB_Retire2_C_V = C_W[ROB_Retire_Pointer + 6'd1];
+                    ROB_Retire2_C_Addr = C_Addr[ROB_Retire_Pointer + 6'd1];
+                    ROB_Retire2_Z_V = Z_W[ROB_Retire_Pointer + 6'd1];
+                    ROB_Retire2_Z_Addr = Z_Addr[ROB_Retire_Pointer + 6'd1];
+                    ROB_Retire2_SB_V = 1'b1;
+                    ROB_Retire2_SB_Addr = SB_Addr[ROB_Retire_Pointer + 6'd1];
+                    ROB_Retire2_HeadPC = PC[ROB_Head_Pointer + 6'd1];
+                end
+                else begin
+                    // LM or SM as the second instruction
+                    ROB_Retire2_V = 1'b0;
+                    ROB_Retire2_ARF_Addr = 3'b0;
+                    ROB_Retire2_RRF_Addr = {RRF_SIZE{1'b0}};
+                    ROB_Retire2_C_V = 1'b0;
+                    ROB_Retire2_C_Addr = {R_CZ_SIZE{1'b0}};
+                    ROB_Retire2_Z_V = 1'b0;
+                    ROB_Retire2_Z_Addr = {R_CZ_SIZE{1'b0}};
+                    ROB_Retire2_SB_V = 1'b0;
+                    ROB_Retire2_SB_Addr = {SB_SIZE{1'b0}};
+                    ROB_Retire2_HeadPC = 16'b0;
+                end
+            end
+            else
+            begin
+                //LM or SM in Instruction 1
+                ROB_Retire_LM_V = 1'b1;
+
+                // Find the range for LM SM
+
+                // Make a temporary pointer for Retire and update it in the clocked process with an if else.
+                // Don't execute the second instruction
+                ROB_Retire2_V = 1'b0;
+                ROB_Retire2_ARF_Addr = 3'b0;
+                ROB_Retire2_RRF_Addr = {RRF_SIZE{1'b0}};
+                ROB_Retire2_C_V = 1'b0;
+                ROB_Retire2_C_Addr = {R_CZ_SIZE{1'b0}};
+                ROB_Retire2_Z_V = 1'b0;
+                ROB_Retire2_Z_Addr = {R_CZ_SIZE{1'b0}};
+                ROB_Retire2_SB_V = 1'b0;
+                ROB_Retire2_SB_Addr = {SB_SIZE{1'b0}};
+                ROB_Retire2_HeadPC = 16'b0;
+            end
         end
     end
 end
