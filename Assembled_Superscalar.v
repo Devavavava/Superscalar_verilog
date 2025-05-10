@@ -375,7 +375,37 @@ Decoder decoder_inst (
 
 	// To SB
 	.SB_reserve_1(SB_reserve_1),
-	.SB_reserve_2(SB_reserve_2)
+	.SB_reserve_2(SB_reserve_2),
+
+
+
+
+	.ALU1_D_W(ALU1_D_W),
+	.ALU1_D(ALU1_D),
+	.ALU1_D_RR(ALU1_D_RR),
+	.ALU1_C_W(),
+	.ALU1_C(),
+	.ALU1_C_RR(),
+	.ALU1_Z_W(),
+	.ALU1_Z(),
+	.ALU1_Z_RR(),
+
+	.ALU2_D_W(ALU2_D_W),
+	.ALU2_D(ALU2_D),
+	.ALU2_D_RR(ALU2_D_RR),
+	.ALU2_C_W(),
+	.ALU2_C(),
+	.ALU2_C_RR(),
+	.ALU2_Z_W(),
+	.ALU2_Z(),
+	.ALU2_Z_RR(),
+
+	.LS_D_W(LS_D_W),
+	.LS_D(LS_D),
+	.LS_D_RR(LS_D_RR),
+	.LS_Z_W(),
+	.LS_Z(),
+	.LS_Z_RR()
 );
 
 // Instantiate RS

@@ -159,18 +159,18 @@ always @(*) begin
         ROB_Retire1_SB_V = 1'b1;
         ROB_Retire1_SB_Addr = SB_Addr[ROB_Retire_Pointer];
         ROB_Retire1_HeadPC = PC[ROB_Head_Pointer + 6'd1];
-    end
-    if(Instr_Valid[ROB_Retire_Pointer + 6'd1]) begin
-        ROB_Retire2_V = 1'b1;
-        ROB_Retire2_ARF_Addr = ARF_Addr[ROB_Retire_Pointer + 6'd1];
-        ROB_Retire2_RRF_Addr = RRF_Addr[ROB_Retire_Pointer + 6'd1];
-        ROB_Retire2_C_V = C_W[ROB_Retire_Pointer + 6'd1];
-        ROB_Retire2_C_Addr = C_Addr[ROB_Retire_Pointer + 6'd1];
-        ROB_Retire2_Z_V = Z_W[ROB_Retire_Pointer + 6'd1];
-        ROB_Retire2_Z_Addr = Z_Addr[ROB_Retire_Pointer + 6'd1];
-        ROB_Retire2_SB_V = 1'b1;
-        ROB_Retire2_SB_Addr = SB_Addr[ROB_Retire_Pointer + 6'd1];
-        ROB_Retire2_HeadPC = PC[ROB_Head_Pointer + 6'd1];
+        if(Instr_Valid[ROB_Retire_Pointer + 6'd1]) begin
+            ROB_Retire2_V = 1'b1;
+            ROB_Retire2_ARF_Addr = ARF_Addr[ROB_Retire_Pointer + 6'd1];
+            ROB_Retire2_RRF_Addr = RRF_Addr[ROB_Retire_Pointer + 6'd1];
+            ROB_Retire2_C_V = C_W[ROB_Retire_Pointer + 6'd1];
+            ROB_Retire2_C_Addr = C_Addr[ROB_Retire_Pointer + 6'd1];
+            ROB_Retire2_Z_V = Z_W[ROB_Retire_Pointer + 6'd1];
+            ROB_Retire2_Z_Addr = Z_Addr[ROB_Retire_Pointer + 6'd1];
+            ROB_Retire2_SB_V = 1'b1;
+            ROB_Retire2_SB_Addr = SB_Addr[ROB_Retire_Pointer + 6'd1];
+            ROB_Retire2_HeadPC = PC[ROB_Head_Pointer + 6'd1];
+        end
     end
 end
 
@@ -244,9 +244,9 @@ always @(posedge CLK or posedge RST) begin
         // Retiring instructions
         if(Instr_Valid[ROB_Retire_Pointer]) begin
             valid[ROB_Retire_Pointer] <= 1'b0;
-        end
-        if(Instr_Valid[ROB_Retire_Pointer + 6'd1]) begin
-            valid[ROB_Retire_Pointer + 6'd1] <= 1'b0;
+            if(Instr_Valid[ROB_Retire_Pointer + 6'd1]) begin
+                valid[ROB_Retire_Pointer + 6'd1] <= 1'b0;
+            end
         end
 
 
@@ -254,14 +254,14 @@ always @(posedge CLK or posedge RST) begin
         if(ROB_Retire1_V && ROB_Retire2_V) begin
             ROB_Retire_Pointer <= ROB_Retire_Pointer + 6'd2;
         end
-        else if(ROB_Retire1_V || ROB_Retire2_V) begin
+        else if(ROB_Retire1_V) begin
             ROB_Retire_Pointer <= ROB_Retire_Pointer + 6'd1;
         end
         // Update the head pointer
         if(Dispatch1_V && Dispatch2_V) begin
             ROB_Head_Pointer <= ROB_Head_Pointer + 6'd2;
         end
-        else if(Dispatch1_V || Dispatch2_V) begin
+        else if(Dispatch1_V) begin
             ROB_Head_Pointer <= ROB_Head_Pointer + 6'd1;
         end
     end

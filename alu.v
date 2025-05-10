@@ -151,7 +151,7 @@ module alu (
                 ROB_index_out = ROB_index_in;
             end
 
-            if (opcode == 4'b0011) begin // ADI
+            if (opcode == 4'b0011) begin // LLI
                 ALU_D = imm;
 
                 // Assign destination register tags

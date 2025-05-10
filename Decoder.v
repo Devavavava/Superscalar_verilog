@@ -135,7 +135,7 @@ module Decoder #(
     input wire [7:0] ALU2_C_RR,
     input wire ALU2_Z_W,
     input wire ALU2_Z,
-    input wire [7:0] ALU2_Z_RR
+    input wire [7:0] ALU2_Z_RR,
 
     input wire LS_D_W,
     input wire [15:0] LS_D,
