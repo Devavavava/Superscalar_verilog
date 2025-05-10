@@ -137,7 +137,7 @@ always @(*) begin
     ROB_Retire1_Z_Addr = {R_CZ_SIZE{1'b0}};
     ROB_Retire1_SB_V = 1'b0;
     ROB_Retire1_SB_Addr = {SB_SIZE{1'b0}};
-    ROB_Retire1_HeadPC = 16'b0;
+    // ROB_Retire1_HeadPC = 16'b0;
 
     ROB_Retire2_V = 1'b0;
     ROB_Retire2_ARF_Addr = 3'b0;
@@ -148,69 +148,32 @@ always @(*) begin
     ROB_Retire2_Z_Addr = {R_CZ_SIZE{1'b0}};
     ROB_Retire2_SB_V = 1'b0;
     ROB_Retire2_SB_Addr = {SB_SIZE{1'b0}};
-    ROB_Retire2_HeadPC = 16'b0;
+    // ROB_Retire2_HeadPC = 16'b0;
 
     // Retiring instructions
     if(Instr_Valid[ROB_Retire_Pointer]) begin
-        // if (~Is_LM_SM[ROB_Retire_Pointer]) begin
-            ROB_Retire1_V = 1'b1;
-            ROB_Retire1_ARF_Addr = ARF_Addr[ROB_Retire_Pointer];
-            ROB_Retire1_RRF_Addr = RRF_Addr[ROB_Retire_Pointer];
-            ROB_Retire1_C_V = C_W[ROB_Retire_Pointer];
-            ROB_Retire1_C_Addr = C_Addr[ROB_Retire_Pointer];
-            ROB_Retire1_Z_V = Z_W[ROB_Retire_Pointer];
-            ROB_Retire1_Z_Addr = Z_Addr[ROB_Retire_Pointer];
-            ROB_Retire1_SB_V = 1'b1;
-            ROB_Retire1_SB_Addr = SB_Addr[ROB_Retire_Pointer];
-            ROB_Retire1_HeadPC = PC[ROB_Head_Pointer + 6'd1];
-            if(Instr_Valid[ROB_Retire_Pointer + 6'd1]) begin
-                // if (~Is_LM_SM[ROB_Retire_Pointer + 6'd1]) begin
-                    ROB_Retire2_V = 1'b1;
-                    ROB_Retire2_ARF_Addr = ARF_Addr[ROB_Retire_Pointer + 6'd1];
-                    ROB_Retire2_RRF_Addr = RRF_Addr[ROB_Retire_Pointer + 6'd1];
-                    ROB_Retire2_C_V = C_W[ROB_Retire_Pointer + 6'd1];
-                    ROB_Retire2_C_Addr = C_Addr[ROB_Retire_Pointer + 6'd1];
-                    ROB_Retire2_Z_V = Z_W[ROB_Retire_Pointer + 6'd1];
-                    ROB_Retire2_Z_Addr = Z_Addr[ROB_Retire_Pointer + 6'd1];
-                    ROB_Retire2_SB_V = 1'b1;
-                    ROB_Retire2_SB_Addr = SB_Addr[ROB_Retire_Pointer + 6'd1];
-                    ROB_Retire2_HeadPC = PC[ROB_Head_Pointer + 6'd1];
-                end
-            //     else begin
-            //         // LM or SM as the second instruction
-            //         ROB_Retire2_V = 1'b0;
-            //         ROB_Retire2_ARF_Addr = 3'b0;
-            //         ROB_Retire2_RRF_Addr = {RRF_SIZE{1'b0}};
-            //         ROB_Retire2_C_V = 1'b0;
-            //         ROB_Retire2_C_Addr = {R_CZ_SIZE{1'b0}};
-            //         ROB_Retire2_Z_V = 1'b0;
-            //         ROB_Retire2_Z_Addr = {R_CZ_SIZE{1'b0}};
-            //         ROB_Retire2_SB_V = 1'b0;
-            //         ROB_Retire2_SB_Addr = {SB_SIZE{1'b0}};
-            //         ROB_Retire2_HeadPC = 16'b0;
-            //     end
-            // end
-            // else
-            // begin
-            //     //LM or SM in Instruction 1
-            //     ROB_Retire_LM_V = 1'b1;
-
-            //     // Find the range for LM SM
-
-            //     // Make a temporary pointer for Retire and update it in the clocked process with an if else.
-            //     // Don't execute the second instruction
-            //     ROB_Retire2_V = 1'b0;
-            //     ROB_Retire2_ARF_Addr = 3'b0;
-            //     ROB_Retire2_RRF_Addr = {RRF_SIZE{1'b0}};
-            //     ROB_Retire2_C_V = 1'b0;
-            //     ROB_Retire2_C_Addr = {R_CZ_SIZE{1'b0}};
-            //     ROB_Retire2_Z_V = 1'b0;
-            //     ROB_Retire2_Z_Addr = {R_CZ_SIZE{1'b0}};
-            //     ROB_Retire2_SB_V = 1'b0;
-            //     ROB_Retire2_SB_Addr = {SB_SIZE{1'b0}};
-            //     ROB_Retire2_HeadPC = 16'b0;
-            // end
-        // end
+        ROB_Retire1_V = RRF_W[ROB_Retire_Pointer];
+        ROB_Retire1_ARF_Addr = ARF_Addr[ROB_Retire_Pointer];
+        ROB_Retire1_RRF_Addr = RRF_Addr[ROB_Retire_Pointer];
+        ROB_Retire1_C_V = C_W[ROB_Retire_Pointer];
+        ROB_Retire1_C_Addr = C_Addr[ROB_Retire_Pointer];
+        ROB_Retire1_Z_V = Z_W[ROB_Retire_Pointer];
+        ROB_Retire1_Z_Addr = Z_Addr[ROB_Retire_Pointer];
+        ROB_Retire1_SB_V = 1'b1;
+        ROB_Retire1_SB_Addr = SB_Addr[ROB_Retire_Pointer];
+        // ROB_Retire1_HeadPC = PC[ROB_Head_Pointer + 6'd1];
+        if(Instr_Valid[ROB_Retire_Pointer + 6'd1]) begin
+            ROB_Retire2_V = RRF_W[ROB_Retire_Pointer + 6'd1];
+            ROB_Retire2_ARF_Addr = ARF_Addr[ROB_Retire_Pointer + 6'd1];
+            ROB_Retire2_RRF_Addr = RRF_Addr[ROB_Retire_Pointer + 6'd1];
+            ROB_Retire2_C_V = C_W[ROB_Retire_Pointer + 6'd1];
+            ROB_Retire2_C_Addr = C_Addr[ROB_Retire_Pointer + 6'd1];
+            ROB_Retire2_Z_V = Z_W[ROB_Retire_Pointer + 6'd1];
+            ROB_Retire2_Z_Addr = Z_Addr[ROB_Retire_Pointer + 6'd1];
+            ROB_Retire2_SB_V = 1'b1;
+            ROB_Retire2_SB_Addr = SB_Addr[ROB_Retire_Pointer + 6'd1];
+            // ROB_Retire2_HeadPC = PC[ROB_Head_Pointer + 6'd1];
+        end
     end
 end
 
@@ -229,11 +192,13 @@ always @(posedge CLK or posedge RST) begin
             Mispredicted_Branch[i] <= 1'b0;
             Correct_Branch_Addr[i] <= 16'b0;
             SB_Addr[i] <= 5'b0;
+            RRF_W[i] <= 1'b0;
+            Is_LM_SM[i] <= 1'b0;
         end
         ROB_Head_Pointer <= 7'b0;
         ROB_Retire_Pointer <= 7'b0;
     end
-    else if(Mispredicted[ROB_Retire_Pointer]) begin
+    else if(Mispredicted_Branch[ROB_Retire_Pointer]) begin
         // Flush the ROB on mispredicted branch
         for (i = 0; i < ROB_SIZE; i = i + 1) begin
             valid[i] <= 1'b0;
@@ -248,6 +213,8 @@ always @(posedge CLK or posedge RST) begin
             Mispredicted_Branch[i] <= 1'b0;
             Correct_Branch_Addr[i] <= 16'b0;
             SB_Addr[i] <= 5'b0;
+            RRF_W[i] <= 1'b0;
+            Is_LM_SM[i] <= 1'b0;
         end
         ROB_Head_Pointer <= 7'b0;
         ROB_Retire_Pointer <= 7'b0;
@@ -258,31 +225,35 @@ always @(posedge CLK or posedge RST) begin
         // Adding dispatched instructions to the ROB
         if(Dispatch1_V && ~valid[ROB_Head_Pointer]) begin
             valid[ROB_Head_Pointer] <= 1'b1;
-            PC[ROB_Head_Pointer] <= Dispatch1[33:18];
-            ARF_Addr[ROB_Head_Pointer] <= Dispatch1[43:41];
-            RRF_Addr[ROB_Head_Pointer] <= Dispatch1[40:34];
-            C_W[ROB_Head_Pointer] <= Dispatch1[17];
-            C_Addr[ROB_Head_Pointer] <= Dispatch1[16:9];
-            Z_W[ROB_Head_Pointer] <= Dispatch1[8];
-            Z_Addr[ROB_Head_Pointer] <= Dispatch1[7:0];
+            PC[ROB_Head_Pointer] <= Dispatch1[40:25];
+            ARF_Addr[ROB_Head_Pointer] <= Dispatch1[50:48];
+            RRF_Addr[ROB_Head_Pointer] <= Dispatch1[47:41];
+            C_W[ROB_Head_Pointer] <= Dispatch1[24];
+            C_Addr[ROB_Head_Pointer] <= Dispatch1[23:16];
+            Z_W[ROB_Head_Pointer] <= Dispatch1[15];
+            Z_Addr[ROB_Head_Pointer] <= Dispatch1[14:7];
             Instr_Valid[ROB_Head_Pointer] <= 1'b0;
             Mispredicted_Branch[ROB_Head_Pointer] <= 1'b0;
             Correct_Branch_Addr[ROB_Head_Pointer] <= 16'b0;
-            SB_Addr[ROB_Head_Pointer] <= SB_Addr1;
+            SB_Addr[ROB_Head_Pointer] <= Dispatch1[6:2];
+            RRF_W[ROB_Head_Pointer] <= Dispatch1[1];
+            Is_LM_SM[ROB_Head_Pointer] <= Dispatch1[0];
         end
         if(Dispatch2_V && ~valid[ROB_Head_Pointer + 6'd1]) begin
             valid[ROB_Head_Pointer + 6'd1] <= 1'b1;
-            PC[ROB_Head_Pointer + 6'd1] <= Dispatch2[33:18];
-            ARF_Addr[ROB_Head_Pointer + 6'd1] <= Dispatch2[43:41];
-            RRF_Addr[ROB_Head_Pointer + 6'd1] <= Dispatch2[40:34];
-            C_W[ROB_Head_Pointer + 6'd1] <= Dispatch2[17];
-            C_Addr[ROB_Head_Pointer + 6'd1] <= Dispatch2[16:9];
-            Z_W[ROB_Head_Pointer + 6'd1] <= Dispatch2[8];
-            Z_Addr[ROB_Head_Pointer + 6'd1] <= Dispatch2[7:0];
+            PC[ROB_Head_Pointer + 6'd1] <= Dispatch2[40:25];
+            ARF_Addr[ROB_Head_Pointer + 6'd1] <= Dispatch2[50:48];
+            RRF_Addr[ROB_Head_Pointer + 6'd1] <= Dispatch2[47:41];
+            C_W[ROB_Head_Pointer + 6'd1] <= Dispatch2[24];
+            C_Addr[ROB_Head_Pointer + 6'd1] <= Dispatch2[23:16];
+            Z_W[ROB_Head_Pointer + 6'd1] <= Dispatch2[15];
+            Z_Addr[ROB_Head_Pointer + 6'd1] <= Dispatch2[14:7];
             Instr_Valid[ROB_Head_Pointer + 6'd1] <= 1'b0;
             Mispredicted_Branch[ROB_Head_Pointer + 6'd1] <= 1'b0;
             Correct_Branch_Addr[ROB_Head_Pointer + 6'd1] <= 16'b0;
-            SB_Addr[ROB_Head_Pointer + 6'd1] <= SB_Addr2;
+            SB_Addr[ROB_Head_Pointer + 6'd1] <= Dispatch2[6:2];
+            RRF_W[ROB_Head_Pointer + 6'd1] <= Dispatch2[1];
+            Is_LM_SM[ROB_Head_Pointer + 6'd1] <= Dispatch2[0];
         end
         // Updating validity and branch information
         if(ALU1_valid) begin
