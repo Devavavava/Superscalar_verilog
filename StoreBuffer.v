@@ -44,10 +44,23 @@ module StoreBuffer(
     // Front and back pointers
     reg [4:0] head;
     reg [4:0] tail;
+
+    // Store buffer index for writeback stage
+    wire [4:0] SB_index0 = SB_index[4:0];
+    wire [4:0] SB_index1 = SB_index[9:5];
+    wire [4:0] SB_index2 = SB_index[14:10];
+    wire [4:0] SB_index3 = SB_index[19:15];
+    wire [4:0] SB_index4 = SB_index[24:20];
+    wire [4:0] SB_index5 = SB_index[29:25];
+    wire [4:0] SB_index6 = SB_index[34:30];
+    wire [4:0] SB_index7 = SB_index[39:35];
     
     // Count of valid entries
-    reg [5:0] valid_count;
-    
+    reg [4:0] valid_count;
+
+    // Index variable and index for searching;
+    reg [5:0] search_idx;
+    reg [4:0] idx;
     // Internal signals for free entries
     reg [4:0] free_1, free_2;
     assign free_index_1 = free_1;
@@ -73,35 +86,6 @@ module StoreBuffer(
         free_1 <= tail + 5'd1;
         free_2 <= tail + 5'd2;
     end
-    // always @(*) begin
-    //     free_1 = 5'h1F; // Default to invalid entry
-    //     free_2 = 5'h1F;
-        
-    //     for (i = 0; i < 32; i = i + 1) begin
-    //         if (!valid[i]) begin
-    //             free_1 = i;
-    //             break;
-    //         end
-    //     end
-        
-    //     for (j = i + 1; j < 32; j = j + 1) begin
-    //         if (!valid[j]) begin
-    //             free_2 = j;
-    //             break;
-    //         end
-    //     end
-        
-    //     // If we couldn't find a second free entry by going forward,
-    //     // wrap around and check from the beginning
-    //     if (free_2 == 5'h1F && i < 32) begin
-    //         for (j = 0; j < i; j = j + 1) begin
-    //             if (!valid[j]) begin
-    //                 free_2 = j;
-    //                 break;
-    //             end
-    //         end
-    //     end
-    // end
     
     // Search for matching address
     always @(*) begin
@@ -110,16 +94,17 @@ module StoreBuffer(
         
         // Search from back (newest) to front (oldest)
         i = tail;
-        for (j = 0; j < 32; j = j + 1) begin
+
+        search_loop : for (j = 0; j < 32; j = j + 1) begin
             if (valid[i] && executed[i] && retired[i] && (addr[i] == LS_search_addr)) begin
                 match_found = 1;
                 match_data = data[i];
-                break; // Take the most recent match
+                disable search_loop; // Take the most recent match
             end
             
             // Move towards front, with wrap-around
             i = (i == 0) ? 31 : i - 1;
-            if (i == tail) break; // We've gone full circle
+            if (i == tail) disable search_loop; // We've gone full circle
         end
     end
     
@@ -148,35 +133,24 @@ module StoreBuffer(
                 
                 // Update back pointer and valid count
                 j = 0; // Counter for valid entries
-                i = head;
-
-                while (valid[i] && retired[i]) begin
-                    i = (i + 1) % 32;
-                    if (i == head) break;
+                idx <= head;
+                search_idx <= 6'b100000;
+                for (j = 0; j < 32; j = j + 1) begin
+                    if (valid[idx] && retired[idx]) begin
+                        search_idx <= idx;
+                        idx <= idx == 5'b0 ? 5'd31 : idx - 5'd1;
+                    end
                 end
-                if (i != head) begin
-                    tail <= i - 1;
+                if (~search_idx[5]) begin
+                    tail <= search_idx[4:0];
+                    valid_count <= tail - head + 5'd1;
                 end
                 else begin
-                    tail <= head == 5'b0 ? 5'd31 : head - 5'd1;
+                    head <= 0;
+                    tail <= 0;
                 end
 
-                // while (j < 32) begin
-                //     if (valid[i] && retired[i]) begin
-                //         tail <= i;
-                //     end
-                //     i = (i + 1) % 32;
-                //     if (i == head) break;
-                //     j = j + 1;
-                // end
-                
-                // // Recalculate valid count
-                // valid_count <= 0;
-                // for (i = 0; i < 32; i = i + 1) begin
-                //     if (valid[i]) begin
-                //         valid_count <= valid_count + 1;
-                //     end
-                // end
+
             end else begin
                 // Reserve entry 1
                 if (reserve_1) begin
@@ -186,7 +160,7 @@ module StoreBuffer(
                     
                     // Update back pointer and valid count
                     tail <= free_1;
-                    valid_count <= valid_count + 1;
+                    valid_count <= valid_count + 5'd1;
                     
                     // If buffer was empty, update front too
                     if (valid_count == 0) begin
@@ -225,12 +199,14 @@ module StoreBuffer(
                 end
                 
                 // Mark entry as retired
-                i = 0;
-                for (i = 0; i < 8; i = i + 1) begin
-                    if (ROB_W[i]) begin
-                        retired[SB_index[5 * i + 4 +: 5 * i]] <= 1;
-                    end
-                end
+                retired[SB_index0] <= ROB_W[0];
+                retired[SB_index1] <= ROB_W[1];
+                retired[SB_index2] <= ROB_W[2];
+                retired[SB_index3] <= ROB_W[3];
+                retired[SB_index4] <= ROB_W[4];
+                retired[SB_index5] <= ROB_W[5];
+                retired[SB_index6] <= ROB_W[6];
+                retired[SB_index7] <= ROB_W[7];                
 
                 // Pop head of queue
                 if (pop_head && head_valid) begin
